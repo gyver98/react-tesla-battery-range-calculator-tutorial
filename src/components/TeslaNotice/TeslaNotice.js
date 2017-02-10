@@ -2,7 +2,7 @@ import React from 'react';
 import './TeslaNotice.css';
 
 const TeslaNotice = () => (
-  <div class="tesla-battery__notice">
+  <div className="tesla-battery__notice">
     <p>
       The actual amount of range that you experience will vary based
       on your particular use conditions. See how particular use conditions
