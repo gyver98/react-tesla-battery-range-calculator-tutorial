@@ -60,8 +60,7 @@ class TeslaBattery extends React.Component {
     // update config state with new value
     title === 'Speed' ? config['speed'] = newValue : config['temperature'] = newValue;
     // update our state
-    //this.setState({ config }, () => {this.statsUpdate()});
-    this.setState({ config });
+    this.setState({ config }, () => {this.statsUpdate()});
   }
 
   increment(e, title) {
@@ -108,16 +107,14 @@ class TeslaBattery extends React.Component {
   handleChangeClimate() {
     const config = {...this.state.config};
     config['climate'] = !this.state.config.climate;
-    //this.setState({ config }, () => {this.statsUpdate()});
-    this.setState({ config });
+    this.setState({ config }, () => {this.statsUpdate()});
   }
 
   // handle Wheels click event handler
   handleChangeWheels(size) {
     const config = {...this.state.config};
     config['wheels'] = size;
-    //this.setState({ config }, () => {this.statsUpdate()});
-    this.setState({ config });
+    this.setState({ config }, () => {this.statsUpdate()});
   }  
 
   render() {    
