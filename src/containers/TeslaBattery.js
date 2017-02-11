@@ -53,14 +53,15 @@ class TeslaBattery extends React.Component {
   increment(e, title) {
     e.preventDefault();
     let currentValue, maxValue, step;
+    const { speed, temperature } = this.props.counterDefaultVal;
     if (title === 'Speed') {
       currentValue = this.state.config.speed;
-      maxValue = this.props.counterDefaultVal.speed.max;
-      step = this.props.counterDefaultVal.speed.step;
+      maxValue = speed.max;
+      step = speed.step;
     } else {
       currentValue = this.state.config.temperature;
-      maxValue = this.props.counterDefaultVal.temperature.max;
-      step = this.props.counterDefaultVal.temperature.step;
+      maxValue = temperature.max;
+      step = temperature.step;
     }
     
     if(currentValue < maxValue) {
@@ -78,14 +79,15 @@ class TeslaBattery extends React.Component {
     e.preventDefault();
     //debugger;
     let currentValue, minValue, step;
+    const { speed, temperature } = this.props.counterDefaultVal;
     if (title === 'Speed') {
       currentValue = this.state.config.speed;
-      minValue = this.props.counterDefaultVal.speed.min;
-      step = this.props.counterDefaultVal.speed.step;
+      minValue = speed.min;
+      step = speed.step;
     } else {
       currentValue = this.state.config.temperature;
-      minValue = this.props.counterDefaultVal.temperature.min;
-      step = this.props.counterDefaultVal.temperature.step;
+      minValue = temperature.min;
+      step = temperature.step;
     }
     
     if(currentValue > minValue) {
