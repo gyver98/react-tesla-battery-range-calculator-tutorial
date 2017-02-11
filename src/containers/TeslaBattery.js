@@ -52,7 +52,7 @@ class TeslaBattery extends React.Component {
 
   increment(e, title) {
     e.preventDefault();
-    var currentValue, maxValue, step;
+    let currentValue, maxValue, step;
     if (title === 'Speed') {
       currentValue = this.state.config.speed;
       maxValue = this.props.counterDefaultVal.speed.max;
@@ -77,7 +77,7 @@ class TeslaBattery extends React.Component {
   decrement(e, title) {
     e.preventDefault();
     //debugger;
-    var currentValue, minValue, step;
+    let currentValue, minValue, step;
     if (title === 'Speed') {
       currentValue = this.state.config.speed;
       minValue = this.props.counterDefaultVal.speed.min;
