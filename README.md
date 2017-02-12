@@ -1,1244 +1,1229 @@
-This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
+---
+layout:     post
+title:      Building Tesla's battery range calculator with React
+date:       2017-02-09 11:37:19
+summary:    React로 Tesla's battery range calculator 구현하기 
+categories: blog development react
+---
 
-Below you will find some information on how to perform common tasks.<br>
-You can find the most recent version of this guide [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
 
-## Table of Contents
+이 글에서는 React로 Tesla's battery range calculator을 구현하는 과정을 공유하고자 한다.
+이 튜토리얼은 Todd Motto의 [Building Tesla's battery range calculator with Angular 2 reactive forms](https://toddmotto.com/building-tesla-range-calculator-angular-2-reactive-forms)를 참조하여 React 버전으로 재구성한것임을 밝혀둔다.
 
-- [Updating to New Releases](#updating-to-new-releases)
-- [Sending Feedback](#sending-feedback)
-- [Folder Structure](#folder-structure)
-- [Available Scripts](#available-scripts)
-  - [npm start](#npm-start)
-  - [npm test](#npm-test)
-  - [npm run build](#npm-run-build)
-  - [npm run eject](#npm-run-eject)
-- [Syntax Highlighting in the Editor](#syntax-highlighting-in-the-editor)
-- [Displaying Lint Output in the Editor](#displaying-lint-output-in-the-editor)
-- [Installing a Dependency](#installing-a-dependency)
-- [Importing a Component](#importing-a-component)
-- [Adding a Stylesheet](#adding-a-stylesheet)
-- [Post-Processing CSS](#post-processing-css)
-- [Adding Images and Fonts](#adding-images-and-fonts)
-- [Using the `public` Folder](#using-the-public-folder)
-- [Using Global Variables](#using-global-variables)
-- [Adding Bootstrap](#adding-bootstrap)
-- [Adding Flow](#adding-flow)
-- [Adding Custom Environment Variables](#adding-custom-environment-variables)
-- [Can I Use Decorators?](#can-i-use-decorators)
-- [Integrating with a Node Backend](#integrating-with-a-node-backend)
-- [Proxying API Requests in Development](#proxying-api-requests-in-development)
-- [Using HTTPS in Development](#using-https-in-development)
-- [Generating Dynamic `<meta>` Tags on the Server](#generating-dynamic-meta-tags-on-the-server)
-- [Running Tests](#running-tests)
-  - [Filename Conventions](#filename-conventions)
-  - [Command Line Interface](#command-line-interface)
-  - [Version Control Integration](#version-control-integration)
-  - [Writing Tests](#writing-tests)
-  - [Testing Components](#testing-components)
-  - [Using Third Party Assertion Libraries](#using-third-party-assertion-libraries)
-  - [Initializing Test Environment](#initializing-test-environment)
-  - [Focusing and Excluding Tests](#focusing-and-excluding-tests)
-  - [Coverage Reporting](#coverage-reporting)
-  - [Continuous Integration](#continuous-integration)
-  - [Disabling jsdom](#disabling-jsdom)
-  - [Experimental Snapshot Testing](#experimental-snapshot-testing)
-  - [Editor Integration](#editor-integration)
-- [Developing Components in Isolation](#developing-components-in-isolation)
-- [Making a Progressive Web App](#making-a-progressive-web-app)
-- [Deployment](#deployment)
-  - [Serving Apps with Client-Side Routing](#serving-apps-with-client-side-routing)
-  - [Building for Relative Paths](#building-for-relative-paths)
-  - [Firebase](#firebase)
-  - [GitHub Pages](#github-pages)
-  - [Heroku](#heroku)
-  - [Modulus](#modulus)
-  - [Netlify](#netlify)
-  - [Now](#now)
-  - [S3 and CloudFront](#s3-and-cloudfront)
-  - [Surge](#surge)
-- [Troubleshooting](#troubleshooting)
-  - [`npm test` hangs on macOS Sierra](#npm-test-hangs-on-macos-sierra)
-  - [`npm run build` silently fails](#npm-run-build-silently-fails)
-- [Something Missing?](#something-missing)
+이것이 우리가 만들 애플리케이션의 최종 GIF 이미지다.
 
-## Updating to New Releases
+![final](https://lh3.googleusercontent.com/ADOBXOthirfSi9f9j-f2giwZc_9Gtlb6qcNAmnR0y1rLVBKvRRyG4Zf5oPkvtlXE2dsKKFy0Bw=s944 "final.gif")
 
-Create React App is divided into two packages:
 
-* `create-react-app` is a global command-line utility that you use to create new projects.
-* `react-scripts` is a development dependency in the generated projects (including this one).
+> 라이브 버전은 [여기서](http://cute-amusement.surge.sh) 확인할 수 있다.
+ 
+> 소스코드는 [여기서](https://github.com/gyver98/react-tesla-range-calculator) 확인 할 수 있다. 
+ 
+이제 단계별로 애플리케이션을 만들어보자.
 
-You almost never need to update `create-react-app` itself: it delegates all the setup to `react-scripts`.
+## Project Setup and creat-react-app
 
-When you run `create-react-app`, it always creates the project with the latest version of `react-scripts` so you’ll get all the new features and improvements in newly created apps automatically.
+[`creat-react-app`](https://github.com/facebookincubator/create-react-app)은 빠른 react application 개발을 위해 페이스북에서 만든 새로운 툴로서 복잡한 설정없이 바로 React 프로젝트를 쉽게 시작할 수 있게 도와준다.
+다음의 명령을 통해 쉽게 우리의 프로젝트 `react-tesla-range-calculator`를 설치하고 애플리케이션을 바로 시작할 수 있다.
 
-To update an existing project to a new version of `react-scripts`, [open the changelog](https://github.com/facebookincubator/create-react-app/blob/master/CHANGELOG.md), find the version you’re currently on (check `package.json` in this folder if you’re not sure), and apply the migration instructions for the newer versions.
+>- npm install -g create-react-Application
+>- create-react-app react-tesla-range-calculator
+>- cd react-tesla-range-calculator
+>- npm start
 
-In most cases bumping the `react-scripts` version in `package.json` and running `npm install` in this folder should be enough, but it’s good to consult the [changelog](https://github.com/facebookincubator/create-react-app/blob/master/CHANGELOG.md) for potential breaking changes.
+![create-react-app](https://lh3.googleusercontent.com/v7jnACqzmtuslHgKZ5DlohPUkxqX6RHOYg8CIE3f0vF-sSMWa0wqjt7dWsZJehCf5k-_gDZNMg=s944 "create-react-application.jpg")
 
-We commit to keeping the breaking changes minimal so you can upgrade `react-scripts` painlessly.
 
-## Sending Feedback
+`creat-react-app`을 통해 새로운 Application을 생성한 후 `http://localhost:3000/` 을 오픈하여 생성된 application을 확인해보자.
+아래의 화면이 보인다면 성공적으로 프로젝트가 설정된 것이다.
 
-We are always open to [your feedback](https://github.com/facebookincubator/create-react-app/issues).
+![](https://lh3.googleusercontent.com/EeKbF6zn5lnouSSdulf4uvRPqxxCEo75P-shtCF5Fh4aOb3A3Xsu7sbSsiitLfd-UggKlz3D5Q=s944 "Screen Shot 2017-02-01 at 3.21.15 pm.png")
 
-## Folder Structure
-
-After creation, your project should look like this:
+프로젝트를 본격적으로 시작하기에 앞서 먼저 프로젝트 소스 구조를 정리하자.
+우리 프로젝트에 필요한 파일만 남기고 나머지는 삭제하도록 하자. (deleted App.test.js , logo.svg)
+이제 우리 src 디렉토리는 다음과 같이 보여야 한다.
 
 ```
-my-app/
-  README.md
-  node_modules/
-  package.json
-  public/
-    index.html
-    favicon.ico
-  src/
-    App.css
-    App.js
-    App.test.js
-    index.css
-    index.js
-    logo.svg
+src
+ - App.css
+ - App.js
+ - index.css
+ - index.js
 ```
 
-For the project to build, **these files must exist with exact filenames**:
+## Project Entry Point
+가장 먼저 우리의 Tesla app을 시작하는 entry point를 설정해야 한다. 고맙게도 `create-react-app`이 이미 만들어 놓았다.
 
-* `public/index.html` is the page template;
-* `src/index.js` is the JavaScript entry point.
-
-You can delete or rename the other files.
-
-You may create subdirectories inside `src`. For faster rebuilds, only files inside `src` are processed by Webpack.<br>
-You need to **put any JS and CSS files inside `src`**, or Webpack won’t see them.
-
-Only files inside `public` can be used from `public/index.html`.<br>
-Read instructions below for using assets from JavaScript and HTML.
-
-You can, however, create more top-level directories.<br>
-They will not be included in the production build so you can use them for things like documentation.
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](#running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](#deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Syntax Highlighting in the Editor
-
-To configure the syntax highlighting in your favorite text editor, head to the [Babel's docs](https://babeljs.io/docs/editors) and follow the instructions. Some of the most popular editors are covered.
-
-## Displaying Lint Output in the Editor
-
->Note: this feature is available with `react-scripts@0.2.0` and higher.
-
-Some editors, including Sublime Text, Atom, and Visual Studio Code, provide plugins for ESLint.
-
-They are not required for linting. You should see the linter output right in your terminal as well as the browser console. However, if you prefer the lint results to appear right in your editor, there are some extra steps you can do.
-
-You would need to install an ESLint plugin for your editor first.
-
->**A note for Atom `linter-eslint` users**
-
->If you are using the Atom `linter-eslint` plugin, make sure that **Use global ESLint installation** option is checked:
-
-><img src="http://i.imgur.com/yVNNHJM.png" width="300">
-
-Then add this block to the `package.json` file of your project:
-
-```js
-{
-  // ...
-  "eslintConfig": {
-    "extends": "react-app"
-  }
-}
-```
-
-Finally, you will need to install some packages *globally*:
-
-```sh
-npm install -g eslint-config-react-app@0.3.0 eslint@3.8.1 babel-eslint@7.0.0 eslint-plugin-react@6.4.1 eslint-plugin-import@2.0.1 eslint-plugin-jsx-a11y@2.2.3 eslint-plugin-flowtype@2.21.0
-```
-
-We recognize that this is suboptimal, but it is currently required due to the way we hide the ESLint dependency. The ESLint team is already [working on a solution to this](https://github.com/eslint/eslint/issues/3458) so this may become unnecessary in a couple of months.
-
-## Installing a Dependency
-
-The generated project includes React and ReactDOM as dependencies. It also includes a set of scripts used by Create React App as a development dependency. You may install other dependencies (for example, React Router) with `npm`:
+`src/App.js` 가 바로 우리 앱의 엔트리 포인트이다.
+App.js 를 다음과 같이 수정하도록 하자.
 
 ```
-npm install --save <library-name>
-```
-
-## Importing a Component
-
-This project setup supports ES6 modules thanks to Babel.<br>
-While you can still use `require()` and `module.exports`, we encourage you to use [`import` and `export`](http://exploringjs.com/es6/ch_modules.html) instead.
-
-For example:
-
-### `Button.js`
-
-```js
 import React, { Component } from 'react';
+import './App.css';
 
-class Button extends Component {
+class App extends Component {
   render() {
-    // ...
+    return (
+      <div>
+        <h2>Let's get started</h2>
+      </div>
+    );
   }
 }
 
-export default Button; // Don’t forget to use export default!
+export default App;
+```
+파일을 저장하면 자동으로 컴파일이 진행되어 업데이트된 화면을 볼 수 있다.
+
+## Project images/assets
+
+이 프로젝트에서 필요한 모든 이미지들은 다음에서 다운로드 받을 수 있다.
+
+* 모든 이미지 [Download](https://toddmotto.com/static/assets.zip)  
+* favicon.ico [Download](https://toddmotto.com/static/favicon.ico)
+
+`assets.zip` 압축을 풀고 모든 이미지들을 `src/assets` 디렉토리에 위치시키고 다운 받은 `favicon.ico`를 소스 루트에 놓는다.
+
+```
+react-tesla-range-calculator/src/asstets
+``` 
+
+> 스텝을 따라하다가 뭔가 놓친거 같거나 확실하지 않다면 언제든지 [소스코드](https://github.com/gyver98/react-tesla-range-calculator)를 참조하도록 하자. 
+
+## Data service
+Tesla 사이트에서 얻을 수 있는 데이타는 하드 코드되 있고 아주 큰 데이타인데, 여기서는 이를 사용하기 쉽도록 Todd가 새롭게 만든 버전의 데이타를 사용하도록 하겠다. [link](https://github.com/toddmotto/angular-tesla-range-calculator/blob/master/src/app/tesla-battery/tesla-battery.service.ts)
+
+우리는 Angular2에서 사용하는 `Injectable` decorator를 사용하지 않기 때문에 그 부분을 제외하고 export 부분만을 카피해서 `src/services/BatteryService.js` 에 저장하고  이를 `TeslaBattery Container`에서 `import` 해서 사용할 것이다.
+
+이 데이타 서비스는 추후에 다시 언급하도록 하겠다.
+
+
+Breaking Down the UI
+-------------
+거의 모든 React application UI는 여러 <span class="bg-dark-gray white">컴포넌트들의 조합</span>으로 구성되어진다. 
+날씨 앱을 예로들자면, 지역명을 보여주는 컴포넌트, 현재 기온을 보여주는 컴포넌트, 5일간의 예측을 나타내는 그래프 컴포넌트들로 구성되어진다.
+
+이러한 이유로 React 앱 개발에 앞서 UI를 컴포넌트 단위로 분해하여 보는것이 좋다.
+
+> 애플리케이션을 컴포넌트들의 조합으로 바라보는 접근 방식에 대해서는 [Thinking in React](https://facebook.github.io/react/docs/thinking-in-react.html)를 참조
+
+
+이 포스트에서 만들어볼 얘플리케이션의 레이아웃은 다음과 같다.
+![layout](https://lh3.googleusercontent.com/JS_S82Te-_vx4OhM71m8Qn6qV5d7d6tFeCULfKBsGHTnqZFPx1s39LvTm29X8PoZCH6UGcumSA=s944 "layout.jpg")
+
+UI를 컴포넌트 트리로 나타내보면 다음과 같다.
+
+```
+<App> -- Application entry point
+ <Header></Header>
+ 	<TeslaBattery> -- Container
+ 		<TeslaCar />     -- Presentational Component
+ 		<TeslaStats />   -- Presentational Component 
+ 		<TeslaCounter /> -- Presentational Component
+ 		<TeslaClimate /> -- Presentational Component
+ 		<TeslaWheels />  -- Presentational Component
+ 		<TeslaNotice />  -- Presentational Component
+ 	</TeslaBattery>
+</App>
 ```
 
-### `DangerButton.js`
+## Container and presentational components
+위에서 언급한 컴포넌트 트리를 보면 Container와 Presenataional component로 분류한것을 볼 수 있다.
+이는 React로 애플리케이션을 개발할때 사용할 수 있는 유용한 패턴으로 컴포넌트들을 다음의 두 가지 범주로 나누게 되면 더 쉽게 재사용성을 높일 수 있게 된다.
 
+```
+* Container Component (statful component)
+ - 어떻게 동작하는지에 관심이있다.
+ - 일반적으로 일부 랩핑 div를 제외하고는 자체 DOM 마크업이 없으며 스타일을 갖지 않는다.
+ - 프리젠테이션 또는 다른 컨테이너에 데이터와 동작을 제공한다.
+ - 애플리케이션의 상태를 가지며 데이터 소스 역할을 한다.
 
-```js
-import React, { Component } from 'react';
-import Button from './Button'; // Import a component from another file
-
-class DangerButton extends Component {
-  render() {
-    return <Button color="red" />;
-  }
-}
-
-export default DangerButton;
+* Presentational Component (statless component)
+ - 어떻게 보이는지에 관심이있다.
+ - 일반적으로 자체 DOM 마크업과 스타일을 가지고 있다.
+ - Props를 통해 데이타와 콜백 함수를 받는다.
+ - 상태를 거의 갖지 않으며 있다 하더라도 데이터 대신에 UI 상태를 갖는다.
 ```
 
-Be aware of the [difference between default and named exports](http://stackoverflow.com/questions/36795819/react-native-es-6-when-should-i-use-curly-braces-for-import/36796281#36796281). It is a common source of mistakes.
+이러한 패턴을 사용하면 어떤 이득이 있을까?
 
-We suggest that you stick to using default imports and exports when a module only exports a single thing (for example, a component). That’s what you get when you use `export default Button` and `import Button from './Button'`.
+* 관심사의 분리 (Better separation of concerns)
+* 재사용성 (Better reusability)
+* 레이아웃 구성요소를 추출하여 중복 사용을 방지 
 
-Named exports are useful for utility modules that export several functions. A module may have at most one default export and as many named exports as you like.
+>  더 자세한 정보는 Dan Abramov(Redux creator) 의 [Presentational and Container Components](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0#.mbwo09sds)를 참조
 
-Learn more about ES6 modules:
+## Header component
+이제 우리의 첫번째 React 컴포넌트인 `Header`를 만들자.
+`Header` 컴포넌트는 단순히 Tesla 로고와 텍스트가 있는 검정색의 바 이다.
+`src/components/Header` 디렉토리를 생성하고 그 안에 `Header.js` 파일을 만들고 다음의 코드를 입력하자.
 
-* [When to use the curly braces?](http://stackoverflow.com/questions/36795819/react-native-es-6-when-should-i-use-curly-braces-for-import/36796281#36796281)
-* [Exploring ES6: Modules](http://exploringjs.com/es6/ch_modules.html)
-* [Understanding ES6: Modules](https://leanpub.com/understandinges6/read#leanpub-auto-encapsulating-code-with-modules)
-
-## Adding a Stylesheet
-
-This project setup uses [Webpack](https://webpack.github.io/) for handling all assets. Webpack offers a custom way of “extending” the concept of `import` beyond JavaScript. To express that a JavaScript file depends on a CSS file, you need to **import the CSS from the JavaScript file**:
-
-### `Button.css`
-
-```css
-.Button {
-  padding: 20px;
-}
 ```
-
-### `Button.js`
-
-```js
-import React, { Component } from 'react';
-import './Button.css'; // Tell Webpack that Button.js uses these styles
-
-class Button extends Component {
-  render() {
-    // You can use them as regular CSS styles
-    return <div className="Button" />;
-  }
-}
-```
-
-**This is not required for React** but many people find this feature convenient. You can read about the benefits of this approach [here](https://medium.com/seek-ui-engineering/block-element-modifying-your-javascript-components-d7f99fcab52b). However you should be aware that this makes your code less portable to other build tools and environments than Webpack.
-
-In development, expressing dependencies this way allows your styles to be reloaded on the fly as you edit them. In production, all CSS files will be concatenated into a single minified `.css` file in the build output.
-
-If you are concerned about using Webpack-specific semantics, you can put all your CSS right into `src/index.css`. It would still be imported from `src/index.js`, but you could always remove that import if you later migrate to a different build tool.
-
-## Post-Processing CSS
-
-This project setup minifies your CSS and adds vendor prefixes to it automatically through [Autoprefixer](https://github.com/postcss/autoprefixer) so you don’t need to worry about it.
-
-For example, this:
-
-```css
-.App {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-```
-
-becomes this:
-
-```css
-.App {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-}
-```
-
-There is currently no support for preprocessors such as Less, or for sharing variables across CSS files.
-
-## Adding Images and Fonts
-
-With Webpack, using static assets like images and fonts works similarly to CSS.
-
-You can **`import` an image right in a JavaScript module**. This tells Webpack to include that image in the bundle. Unlike CSS imports, importing an image or a font gives you a string value. This value is the final image path you can reference in your code.
-
-Here is an example:
-
-```js
 import React from 'react';
-import logo from './logo.png'; // Tell Webpack this JS file uses this image
+import './Header.css';
+import logoUrl from '../../assets/logo.svg';
 
-console.log(logo); // /logo.84287d09.png
-
-function Header() {
-  // Import result is the URL of your image
-  return <img src={logo} alt="Logo" />;
-}
+const Header = () => (
+  <div className="header">
+    <img src={logoUrl} alt="Tesla" />
+  </div>
+)
 
 export default Header;
 ```
+> 여기서는 컴포넌트가 함수(ES6 Arrow Function) 형태로 되어 있는데 이런 형식으로 선언된 컴포넌트는 함수형 컴포넌트 (Functional Component)라 부른다. 만약에 state가 없고 Lifecycle 메소드가 필요치 않다면 함수형으로 선언하는 것이 좋은 패턴이다. 함수형 컴포넌트는 상태가 없고 오직 전달받는 props에만 의존하기 때문에 Presentational Component에 적합하다.
 
-This ensures that when the project is built, Webpack will correctly move the images into the build folder, and provide us with correct paths.
+### Header Component Style
+`src/components/Header` 디렉토리안에 `Header.css` 파일을 만들고 다음 스타일을 주자.
 
-This works in CSS too:
+```
+.header {
+  padding: 25px 0;
+  text-align: center;
+  background: #222;
+}
 
-```css
-.Logo {
-  background-image: url(./logo.png);
+.header img {
+  width: 100px;
+  height: 13px;
 }
 ```
 
-Webpack finds all relative module references in CSS (they start with `./`) and replaces them with the final paths from the compiled bundle. If you make a typo or accidentally delete an important file, you will see a compilation error, just like when you import a non-existent JavaScript module. The final filenames in the compiled bundle are generated by Webpack from content hashes. If the file content changes in the future, Webpack will give it a different name in production so you don’t need to worry about long-term caching of assets.
+> 컴포넌트에 스타일을 주는 방식은 여러가지가 있겠으나 여기서는 앞으로 컴포넌트를 만들때마다 `components` 디렉토리 안에 각 컴포넌트 디렉토리를 만들고 `JS`파일과 `CSS`파일을 쌍으로 만들것이다.
 
-Please be advised that this is also a custom feature of Webpack.
+### Import Header component in App Container
+`Header` 컴포넌트를 만들었으니 엔트리 포인트인 `App.js`에서 `Import`하여 사용해보자.
 
-**It is not required for React** but many people enjoy it (and React Native uses a similar mechanism for images).<br>
-An alternative way of handling static assets is described in the next section.
+```
+import React, { Component } from 'react';
+import './App.css';
+import Header from './components/Header/Header';
 
-## Using the `public` Folder
+class App extends Component {
+  render() {
+    return (
+      <div className="App">
+        <Header />    
+      </div>
+    );
+  }
+}
 
->Note: this feature is available with `react-scripts@0.5.0` and higher.
+export default App;
+``` 
 
-Normally we encourage you to `import` assets in JavaScript files as described above. This mechanism provides a number of benefits:
+모든 수정된 파일을 저장하면 자동으로 업데이트되며 다음과 같이 Tesla 로고가 보여져야 한다.
 
-* Scripts and stylesheets get minified and bundled together to avoid extra network requests.
-* Missing files cause compilation errors instead of 404 errors for your users.
-* Result filenames include content hashes so you don’t need to worry about browsers caching their old versions.
+![header](https://lh3.googleusercontent.com/gkOjRzStwc0JB9ITpDQL7Mx4R8A2UsIbig5ZRDVLkTHHzo_GSv3KfHdJPBmTNjluXz9ZlbO-QA=s944 "header")
 
-However there is an **escape hatch** that you can use to add an asset outside of the module system.
 
-If you put a file into the `public` folder, it will **not** be processed by Webpack. Instead it will be copied into the build folder untouched.   To reference assets in the `public` folder, you need to use a special variable called `PUBLIC_URL`.
 
-Inside `index.html`, you can use it like this:
+## TeslaBattery Container
+우리 앱에서 `TeslaBattery` 컴포넌트는 `Container`로서 데이타와 상태를 생성 관리하고 이를 다른 `presentational components`에게 전달하며 콜백 함수를 수행하고 상태를 변경하는 역할을 한다.
 
-```html
-<link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+TeslaBattery는 React.Component를 상속함으로서 render 메소드를 가져야하며 선택적으로 constructor를 통해 상태 초기화를 할 수 있고 [Lifecycle](https://facebook.github.io/react/docs/react-component.html) callbacks 같은 다른 메소드를 구현할 수도 있다.
+Lifecycle callback은 컴포넌트를 렌더링하거나 업데이트하려고 할 때 또는 Lifecycle의 다른 단계에서 알림을 받고자 할 때 편리하다.
+
+`src/containers` 디렉토리를 생성하고 그 안에 `TeslaBattery.js` 파일을 만들고 다음의 코드를 입력한다.
+
+```
+import React from 'react';
+import './TeslaBattery.css';
+
+class TeslaBattery extends React.Component {
+  render() {
+    return (
+      <form className="tesla-battery">
+        <h1>Range Per Charge</h1>
+      </form>
+    )
+  }
+}
+
+export default TeslaBattery;
 ```
 
-Only files inside the `public` folder will be accessible by `%PUBLIC_URL%` prefix. If you need to use a file from `src` or `node_modules`, you’ll have to copy it there to explicitly specify your intention to make this file a part of the build.
+컨테이너의 관심은 어떻게 동작하는가에 있기 때문에 `TeslaBattery.css` 에는 최소한의 스타일만 준다.
+앞으로 만들어질 컴포넌트들은 `TesalBattery` 컨테이너 안에 순차적으로 구성되어질 것이다.
 
-When you run `npm run build`, Create React App will substitute `%PUBLIC_URL%` with a correct absolute path so your project works even if you use client-side routing or host it at a non-root URL.
+## TeslaNotice Component
+스태틱 텍스트 부분을 먼저 TeslaNotice 컴포넌트로 만들어보자.
+`src/components/TeslaNotice` 디렉토리를 생성하고 그 안에 `TeslaNotice.js` 파일을 만들고 다음의 코드를 입력하자.
 
-In JavaScript code, you can use `process.env.PUBLIC_URL` for similar purposes:
+```
+import React from 'react';
+import './TeslaNotice.css';
 
-```js
+const TeslaNotice = () => (
+  <div className="tesla-battery__notice">
+    <p>
+      The actual amount of range that you experience will vary based
+      on your particular use conditions. See how particular use conditions
+      may affect your range in our simulation model.
+    </p>
+    <p>
+      Vehicle range may vary depending on the vehicle configuration,
+      battery age and condition, driving style and operating, environmental
+      and climate conditions.
+    </p>
+  </div>
+)
+
+export default TeslaNotice;
+```
+
+### TeslaNotice Component Style
+`src/components/TeslaNotice ` 디렉토리안에 `TeslaNotice.css` 파일을 만들고 다음 스타일을  준다.
+
+```
+.tesla-battery__notice {
+    margin: 20px 0;
+    font-size: 15px;
+    color: #666;
+    line-height: 20px;
+} 
+```
+
+### Import TeslaNotice component in TeslaBattery Container
+그 다음에 `TeslaBattery.js`에서 `TeslaNotice` 컴포넌트를 사용할 수 있도록 `import`한다.
+
+```
+...
+import TeslaNotice from '../components/TeslaNotice/TeslaNotice';
+
+class TeslaBattery extends React.Component {
+  render() {
+    return (
+      <form className="tesla-battery">
+        <h1>Range Per Charge</h1>
+        <TeslaNotice />
+      </form>
+    )
+  }
+}...
+```
+
+> 앞으로도 이러한 패턴으로 컴포넌트를 생성하고 TeslaBattery 컨테이너에서 Import 하여 사용하는 방식으로 개발이 진행될것이다.
+
+## TeslaCar Component
+이번엔 멋진 TeslaCar를 렌더링해보자. 
+`src/components/TeslaCar` 디렉토리를 생성하고 그 안에 `TeslaCar.js` 파일을 만들고 다음의 코드를 입력하자.
+
+```
+import React from 'react';
+import './TeslaCar.css';
+
+const TeslaCar = (props) => (
+  <div className="tesla-car">
+    <div className="tesla-wheels">
+      <div className={`tesla-wheel tesla-wheel--front tesla-wheel--${props.wheelsize}`}></div>
+      <div className={`tesla-wheel tesla-wheel--rear tesla-wheel--${props.wheelsize}`}></div>
+    </div>
+  </div>
+);
+
+TeslaCar.propTypes = {
+  wheelsize: React.PropTypes.number
+}
+
+export default TeslaCar;
+```
+여기서 React built-in typechecking 기능을 이용하여 `propTypes`를 지정하였다. 
+개발모드에서 React는 컴포넌트에 전달되는 `props`를 체크하게 된다. (성능상의 이유로 오직 개발모드에서만 가능하다)
+각 `props` 속성에 대해 React는 (1) prop이 예상되는지 (2) prop이 올바른 유형인지 확인하기 위해 컴포넌트의 `propType` 객체에서 이를 찾으려고 시도한다. 이 경우 `TeslaCar` 컴포넌트가 wheelsize라는 `props` 속성을 기대하고 있으며 number 타입이라는 것을 지정한다. 잘못된 값이 제공되면 자바스크립트 콘솔에 경고가 표시되어 잠재적인 버그를 바로잡는데 유용하다.
+
+> React.PropTypes에 더 자세한 정보는 [여기](https://facebook.github.io/react/docs/typechecking-with-proptypes.html)를 참조
+
+### TeslaCar Component Style
+다음으로 `src/components/TeslaCar ` 디렉토리안에 `TeslaCar.css` 파일을 만들고 다음 스타일을 준다. 코드가 길어 여기서는 생략하였으므로 [소스코드]()를 확인해서 작업하도록 하자.
+
+```
+.tesla-car {
+  width: 100%;
+  min-height: 350px;
+  background: #fff url(../../assets/tesla.jpg) no-repeat top center;
+  background-size: contain; }
+
+.tesla-wheels {
+  height: 247px;
+  width: 555px;
+  position: relative;
+  margin: 0 auto; }
+
+...
+
+```
+### Import TeslaCar component in TeslaBattery Container
+그 다음에 `TeslaBattery.js`에서 `TeslaCar` 컴포넌트를 사용할 수 있도록 `import`한다.
+
+```
+...
+import TeslaCar from '../components/TeslaCar/TeslaCar';
+
+class TeslaBattery extends React.Component {
+  render() {
+    return (
+      <form className="tesla-battery">
+        <h1>Range Per Charge</h1>
+        <TeslaCar />
+        <TeslaNotice />
+      </form>
+    )
+  }
+}
+...
+```
+
+파일을 저장 후 업데이트 된 화면은 다음과 같다.
+
+![enter image description here](https://lh3.googleusercontent.com/_l3ezUs5AA8V50X8FAFX-_cHDujEddpR0iv5Z1NQvrVeTuvKj-_WHlocKoESg3EMgEJ5hO4xXg=s944 "TeslaCar.png")
+
+## Props and React Developer Tools 
+
+와우! 멋지긴 한데 뭔가 이상하다. 바퀴가 보이지 않는다.
+원인을 찾아보자. 소스코드에 따르면 `TeslaCar`는 `props`를 넘겨 받고 `props.wheelsize`에 따라 클래스가 달라져야 한다.
+즉 뭔가 필요한 데이타(이 경우엔 wheelsize)를 상위의 컴포넌트로 받아야만 적절하게 렌더링할 수 있다는 것이고 데이타를 전달받을 수 있는 커뮤니케이션 방법이 있어야 한다. 
+ 
+React는 컴포넌트 트리로 구성이 되는데 데이타와 상태를 갖고 전달해주는 컨테이너와 데이타와 상태를 컨테이너로부터 수동적으로 전달받는 컴포넌트로 크게 구성된다고 볼 수 있는데, 바로 이 상태를 하위 컴포넌트에게 전달해주는 방법이 `props`인 것이다.  
+
+크롬에서 [React Developer Tools](https://www.google.com.au/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0ahUKEwi10rn7soTSAhVJp5QKHYPcC5YQFggbMAA&url=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Freact-developer-tools%2Ffmkadmapgofadopljbjfkapdkoienihi%3Fhl%3Den&usg=AFQjCNEv0udXgBoaukzJa59I_vufhScUbQ&sig2=wTA5bB3JG2ZQ6wbSiDgq8g)를 이용하여 컴포넌트 트리를 확인해보면 이를 쉽게 이해할 수 있다.
+![enter image description here](https://lh3.googleusercontent.com/zaaotVwcHReWQP5wl4odZXvW_wPCRHtPAHuK5aESdCMpSn3EaB96LYvPk3pGEb8DvN6UFy_dcA=s944 "props.jpg")
+
+`props`는 자바스크립트 오브젝트 이며 이 경우에 Empty Object이다. 왜냐하면 상위 컴포넌트인 `TeslaBattery`에서 props를 넘기지 않았기 때문이다.
+
+## State of Application
+여기서 우리 애플리케이션에서 관리해야 할 상태가 무엇이 있는지 생각해보자.
+이 글 상단의 최종 앱 GIF 이미지를 보면 상태값은 다음과 같다.
+
+* carstats (array) : 현재 선택된 조건 수치( speed, temperature, climate, wheel )에 따른 차 모델별 배터리 수치값 배열
+* config (object): 현재 선택된 조건 (speed:55, temperature:20, climate:aricon on, wheel: 19) 
+
+![enter image description here](https://lh3.googleusercontent.com/LZ4rlA_E8f5_Qt-dKNtBICK-R7zcZdtlcuLFM74IiZzT5Zmh_BOJLDTxz1uzsGtgA7i58Nvfaw=s944 "state.jpg")
+
+바로 이 상태가 우리 앱의 <span class="bg-dark-gray white">Single Source of Truth</span>가 된다.
+이제 이 상태값을 관리하고 하위 컴포넌트에 전달할 수 있도록 `TeslaBattery` 컨테이너를 constructor 함수를 추가하고 초기값을 설정한다. TeslaCar 컴포넌트는 `props`를 통해 wheelsize input을 받아들이고 Teslar car 이미지를 렌더링한다.
+
+> 상위(Parent) 컴포넌트나 하위(Child) 컴포넌트 둘다 특정 컴포넌트가 상태가 있는지(stateful) 또는 상태가 없는지(stateless) 여부를 알 수 없으며 함수형 또는 클래스로 정의되었는지 여부도 신경 쓰지 않는다. 이것이 상태가 종종 local 또는 캡슐화되었다고 부르는 이유이다. 상태를 소유하고 설정하고있는 컴포넌트 이외의 컴포넌트에서는 이 상태를 액세스 할 수 없다. 따라서 이 상태값은 하위 컴포넌트에 `props`로 전달되어질 수 있다. 이를 일반적으로 "하향식"또는 "단방향" 데이터 흐름이라고한다. 모든 상태는 항상 특정 컴포넌트가 소유하며 해당 상태에서 파생 된 모든 데이터 또는 UI는 트리의 구성 요소 "아래쪽 방향"에만 영향을 미친다.
+
+```
+...
+class TeslaBattery extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      carstats: [],
+      config: {
+        speed: 55,
+        temperature: 20,
+        climate: true,
+        wheels: 19
+      }
+    }
+  }
+  
+  render() {
+  	  // ES6 Object destructuring Syntax,
+    // takes out required values and create references to them
+    const { config } = this.state;
+    return (
+      <form className="tesla-battery">
+        <h1>Range Per Charge</h1>
+        <TeslaCar wheelsize={config.wheels}/>
+        <TeslaNotice />
+      </form>
+    )
+  }
+}...
+```
+
+`render()` 내에서 `const { a, b } = c` 의 형식의 코드는 `ES6` `Object Destructuring` (객체 비구조화 할당) 문법이다. 필요한 값을 객체에서 꺼내 그 값으로 레퍼런스를 만들어준다.
+
+> 개념적으로, React 컴포넌트는 JavaScript function과 같아 'props'라 불리우는 임의의 입력을 받아 무엇이 보여져야 하는지를 묘사하는 React 엘리먼트를 리턴한다.
+
+파일을 저장하고 업데이트된 화면에서는 렌더링된 테슬라 차의 모습과 바퀴 애니메이션이 잘 동작하는 것을 볼 수 있다.
+또한 컴포넌트 트리에서도 `props`가 잘 전달되는것을 확인할 수 있다.
+
+![enter image description here](https://lh3.googleusercontent.com/6PBG4kbLiVk1QfkXo8pYnfYW33_7yH_ULxq_8uBvxYFloDxacD8WPXLYlduOa0AT-cG9_8qTqQ=s944 "teslacar props.jpg")
+
+> 어떠한 함수들은 입력값을 변경하지 않고 언제나 같은 입력값이면 같은 출력값을 리턴한다는 의미에서 순수하다고 불리운다. (`Pure function`) 여기서 한 가지 중요한 React의 엄격한 룰은 모든 React 컴포넌트들은 `props`에 관해서는 순수 함수와 같이 동작해야 한다는 것이다. `props`는 reda-only여야 한다.
+
+
+## TeslaStats Component
+이제 우리는 `TeslaStats` 컴포넌트를 구현하고자 한다.
+ `src/components/TeslaStats` 디렉토리를 생성하고 그 안에 `TeslaStats.js` 파일을 만들고 다음의 코드를 입력하자.
+ 
+```
+import React from 'react';
+import './TeslaStats.css';
+
+const TeslaStats = (props) => {
+  const listItems = props.carstats.map((stat) => (
+    <li key={stat.model}>
+      <div className={`tesla-stats-icon tesla-stats-icon--${stat.model.toLowerCase()}`}></div>
+      <p>{stat.miles}</p>
+    </li>
+  ));
+  return (
+    <div className="tesla-stats">
+    <ul>
+      {listItems}  
+    </ul>
+  </div>
+  )
+};
+
+TeslaStats.propTypes = {
+  carstats: React.PropTypes.array
+}
+
+export default TeslaStats;
+```
+`TeslaStats` 또한 상태를 전달받는 `presentational component`로서 `props`로 모델별 수치값이 담긴 배열 리스트를 받아 렌더링한다. 
+먼저 자바스크립트에서 어떻게 리스트를 변환하는지를 생각해보자. 아래의 코드는 `map()` 함수를 이용하여 `numbers` 배열을 받아 두배의 값을 리턴한다. 이 코드는 `[2, 4, 6, 8, 10]`을 콘솔에 출력한다. 
+
+```
+const numbers = [1, 2, 3, 4, 5];
+const doubled = numbers.map((number) => number * 2);
+console.log(doubled);
+```
+
+React에서 배열을 리스트의 요소들로 변환하는 것은 거의 이와 똑같다. 
+여기서 우리는 Javascript map() 함수를 사용하여 props.carstats 배열을 반복한다. 매 반복마다 `model`이 담긴 `<div>` 태그와 `miles`가 담긴 `<p>` 태그를 감싸고 있는 `<li>` 엘리먼트를 리턴한다. 최종적으로  listItems 배열을 <ul> 엘리먼트에 포함시켜 리턴한다. 
+
+### TeslaStats Component Style
+다음으로 `src/components/TeslaStats ` 디렉토리안에 `TeslaStats.css` 파일을 만들고 다음 스타일을 지정한다. 코드가 길어 여기서는 생략하였으므로 [소스코드]()를 확인해서 작업하도록 하자.
+
+```
+...
+.tesla-stats {
+  margin: -70px 0 30px; 
+}
+.tesla-stats ul {
+  text-align: center; 
+}
+...    
+```
+이 컴포넌트가 수행하는 작업은 `props.carstats` 배열을 반복하면서 특정 클래스를 `stat.model`을 기반으로 요소에 바인딩한다. 그러면 테슬라 모델을 표시하기 위해 배경 이미지를 교체 할 수 있게된다.
+
+### Import TeslaStats component in TeslaBattery Container
+그 다음에 `TeslaBattery.js`에서 `TeslaStats` 컴포넌트를 사용할 수 있도록 `Import`한다.
+
+```
+...
+import TeslaStats from '../components/TeslaStats/TeslaStats';
+...
 render() {
-  // Note: this is an escape hatch and should be used sparingly!
-  // Normally we recommend using `import` for getting asset URLs
-  // as described in “Adding Images and Fonts” above this section.
-  return <img src={process.env.PUBLIC_URL + '/img/logo.png'} />;
+  const { config, carstats } = this.state;
+  return (
+    <form className="tesla-battery">
+      <h1>Range Per Charge</h1>
+      <TeslaCar wheelsize={config.wheels}/>
+      <TeslaStats carstats={carstats}/>
+      <TeslaNotice />
+    </form>
+  )
+}
+...
+```
+`props`로  `carstats` 배열을 전달해야 하기 때문에 이제 앞서 만들었던 데이터 서비스인 `BatteryService`를 이용하여 값을 셋팅하도록 하자.
+
+### CalculateStats and setState
+먼저 `getModelData`를 `import` 한다. 
+`componentDidMount()` 를 통해 컴포넌트가 마운트 된후 `statsUpdate()` 함수를 호출하고
+입력값으로 `carModels` 와 현재 상태값을 받는 `calculateStats()` 가 실행되면 `model`과 `miles` 값이 매칭된 오브젝트가 리턴되고, 이 리턴값이 `setState()` 를 통해 애플리케이션의 `source of truth`인 `state`오브젝트를 업데이트 하게된다.
+
+```
+...
+import { getModelData } from '../services/BatteryService';
+...
+
+calculateStats = (models, value) => {
+  const dataModels = getModelData();
+  return models.map(model => {
+    // ES6 Object destructuring Syntax,
+    // takes out required values and create references to them
+    const { speed, temperature, climate, wheels } = value;
+    const miles = dataModels[model][wheels][climate ? 'on' : 'off'].speed[speed][temperature];
+    return {
+      model,
+      miles
+    };
+  });
+}
+  
+statsUpdate() {
+  const carModels = ['60', '60D', '75', '75D', '90D', 'P100D'];
+  // Fetch model info from BatteryService and calculate then update state
+  this.setState({
+    carstats: this.calculateStats(carModels, this.state.config)
+  })  
+}
+  
+componentDidMount() {
+	this.statsUpdate(); 
+}
+...
+```
+
+한 가지 주의할 점은 Class 내에서 `this`로 접근하기 위해서는 `TeslaBattery` `constructor` 함수내 명시적인 바인딩이 필요하다.
+
+```
+...
+this.calculateStats = this.calculateStats.bind(this);
+this.statsUpdate = this.statsUpdate.bind(this);
+...
+```
+
+### Add Additional Style
+여기서 보기좋은 레이아웃을 위해 추가적인 스타일링이 필요하다.
+먼저 `src/index.css` 파일을 열고 기존의 모든 코드를 삭제하고 다음을 추가하자.
+
+```
+@font-face {
+  font-family: 'RobotoNormal';
+  src: url('./assets/fonts/Roboto-Regular-webfont.eot');
+  src: url('./assets/fonts/Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+       url('./assets/fonts/Roboto-Regular-webfont.woff') format('woff'),
+       url('./assets/fonts/Roboto-Regular-webfont.ttf') format('truetype'),
+       url('./assets/fonts/Roboto-Regular-webfont.svg#RobotoRegular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font: 300 14px/1.4 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.cf:before,
+.cf:after {
+    content: '';
+    display: table;
+}
+.cf:after {
+    clear: both;
+}
+.cf {
+  *zoom: 1;
+}
+
+``` 
+
+다음으로 `src/App.css` 파일을 열고 기존의 모든 코드를 삭제하고 다음을 추가하자.
+
+```
+.wrapper {
+  margin: 100px 0 150px;
 }
 ```
 
-Keep in mind the downsides of this approach:
 
-* None of the files in `public` folder get post-processed or minified.
-* Missing files will not be called at compilation time, and will cause 404 errors for your users.
-* Result filenames won’t include content hashes so you’ll need to add query arguments or rename them every time they change.
+지금까지의 작업 결과 화면은 다음과 같다.
 
-However, it can be handy for referencing assets like [`manifest.webmanifest`](https://developer.mozilla.org/en-US/docs/Web/Manifest) from HTML, or including small scripts like [`pace.js`](http://github.hubspot.com/pace/docs/welcome/) outside of the bundled code.
+![enter image description here](https://lh3.googleusercontent.com/R6ajaVgTej3zFcUfOn3kb5PsMecYDLMui6C84Leeqy5jt4G-C2qAwtFoxyZW44iMss_HtzA56A=s944 "carstat")
 
-Note that if you add a `<script>` that declares global variables, you also need to read the next section on using them.
+## Reusable TeslaCounter Component
+테슬라의 속도 및 외부 온도 컨트롤은 재사용 가능한 컴포넌트이어야 하므로 단계, 최소값, 최대 값 및 제목 및 단위 (mph / degrees)와 같은 기타 메타 데이터를 허용하는 일반 Counter 컴포넌트로 만들어 보겠다. 또한 지금까지 만들어본 컴포넌트와는 달리 사용자 입력(버튼 클릭, 체크박스 선택 등)에 반응하여 상태값을 변경하는 액션이 필요한데, 어떻게 하위 컴포넌트에서 발생하는 이벤트를 핸들링하는지 알아보도록 하겠다. 
 
-## Using Global Variables
-
-When you include a script in the HTML file that defines global variables and try to use one of these variables in the code, the linter will complain because it cannot see the definition of the variable.
-
-You can avoid this by reading the global variable explicitly from the `window` object, for example:
-
-```js
-const $ = window.$;
-```
-
-This makes it obvious you are using a global variable intentionally rather than because of a typo.
-
-Alternatively, you can force the linter to ignore any line by adding `// eslint-disable-line` after it.
-
-## Adding Bootstrap
-
-You don’t have to use [React Bootstrap](https://react-bootstrap.github.io) together with React but it is a popular library for integrating Bootstrap with React apps. If you need it, you can integrate it with Create React App by following these steps:
-
-Install React Bootstrap and Bootstrap from NPM. React Bootstrap does not include Bootstrap CSS so this needs to be installed as well:
+이전에 했던것처럼 `src/components/TeslaCounter` 디렉토리를 생성하고 그 안에 `TeslaCounter.js` 파일을 만들고 다음의 코드를 입력하자.
 
 ```
-npm install react-bootstrap --save
-npm install bootstrap@3 --save
+import React from 'react';
+import './TeslaCounter.css';
+
+const TeslaCounter = (props) => (
+  <div className="tesla-counter">
+    <p className="tesla-counter__title">{props.initValues.title}</p>
+    <div className="tesla-counter__container cf">
+      <div className="tesla-counter__item">
+        <p className="tesla-counter__number">
+          { props.currentValue }
+          <span>{ props.initValues.unit }</span>
+        </p>
+        <div className="tesla-counter__controls">
+          <button 
+            onClick={(e) => props.increment(e, props.initValues.title)} 
+            disabled={props.currentValue >= props.initValues.max} 
+          >
+          </button>
+          <button 
+            onClick={(e) => props.decrement(e, props.initValues.title)} 
+            disabled={props.currentValue <= props.initValues.min} 
+          >
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>  
+);
+
+TeslaCounter.propTypes = {
+  currentValue: React.PropTypes.number,
+  increment: React.PropTypes.func,
+  decrement: React.PropTypes.func,
+  initValues: React.PropTypes.object
+}
+
+export default TeslaCounter;
 ```
 
-Import Bootstrap CSS and optionally Bootstrap theme CSS in the ```src/index.js``` file:
+여기서 우리가 원하는 것을 생각해보자. 사용자가 속도와 온도를 클릭하여 변경할 때마다 수치가 최대값과 최소값 사이에서 반영되어 렌더링 되도록 상태를 업데이트해야한다. 컴포넌트는 자체 상태만 업데이트해야하므로 TeslaBattery은 상태를 업데이트해야 할 때마다 실행되는 callback(increment, decrement)을 TeslaCounter에 전달한다. 버튼에 onClick 이벤트를 사용하여 이벤트를 알릴수 있다. TeslaBattery에 의해 전달된 callback은 setState()를 호출하고 앱이 업데이트되는것이다. 조금 있다 TeslaBattery에 의해 전달될 callback을 구현해볼것이다.
 
-```js
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/css/bootstrap-theme.css';
+### TeslaCounter Component Style
+먼저 스타일을 구현해보자.
+`src/components/TeslaCounter` 디렉토리안에 `TeslaCounter.css` 파일을 만들고 다음 스타일을 지정한다. 코드가 길어 여기서는 생략하였으므로 [소스코드]()를 확인해서 작업하도록 하자.
+
+```
+.tesla-counter {
+  float: left;
+  width: 230px; 
+}
+.tesla-counter__title {
+  letter-spacing: 2px;
+  font-size: 16px; 
+}
+...  
 ```
 
-Import required React Bootstrap components within ```src/App.js``` file or your custom component files:
+### Import TeslaStats component in TeslaBattery Container
+자, 이제 우리는 `TeslaBattery`에 `callback`을 구현해 `TeslaCar` 컴포넌트로 전달해 보겠다.
+먼저 `TeslaBattery.js`에서 `TeslaCounter` 컴포넌트를 사용할 수 있도록 `import`한다. 그리고 callback 함수인 increment() 와 decrement(), 내부함수인 updateCounterState()를 구현하고 constructor() 내에 바인딩한다. 그 후 `callback` 함수를 `TeslaCounter ` 컴포넌트에 `props`로 전달한다.
 
-```js
-import { Navbar, Jumbotron, Button } from 'react-bootstrap';
+
+```
+...
+	constructor(props) {
+    super(props);
+
+    this.calculateStats = this.calculateStats.bind(this);
+    this.statsUpdate = this.statsUpdate.bind(this);
+    this.increment = this.increment.bind(this);
+    this.decrement = this.decrement.bind(this);
+    this.updateCounterState = this.updateCounterState.bind(this);
+
+    this.state = {
+      carstats: [],
+      config: {
+        speed: 55,
+        temperature: 20,
+        climate: true,
+        wheels: 19
+      }
+    }
+  }
+...
+	updateCounterState(title, newValue) {
+    const config = { ...this.state.config };
+    // update config state with new value
+    title === 'Speed' ? config['speed'] = newValue : config['temperature'] = newValue;
+    // update our state
+    //this.setState({ config }, () => {this.statsUpdate()});
+    this.setState({ config });
+  }
+
+  increment(e, title) {
+    e.preventDefault();
+    let currentValue, maxValue, step;
+    const { speed, temperature } = this.props.counterDefaultVal;
+    if (title === 'Speed') {
+      currentValue = this.state.config.speed;
+      maxValue = speed.max;
+      step = speed.step;
+    } else {
+      currentValue = this.state.config.temperature;
+      maxValue = temperature.max;
+      step = temperature.step;
+    }
+
+    if (currentValue < maxValue) {
+      const newValue = currentValue + step;
+      this.updateCounterState(title, newValue);
+    }
+  }
+
+  decrement(e, title) {
+    e.preventDefault();
+    //debugger;
+    let currentValue, minValue, step;
+    const { speed, temperature } = this.props.counterDefaultVal;
+    if (title === 'Speed') {
+      currentValue = this.state.config.speed;
+      minValue = speed.min;
+      step = speed.step;
+    } else {
+      currentValue = this.state.config.temperature;
+      minValue = temperature.min;
+      step = temperature.step;
+    }
+
+    if (currentValue > minValue) {
+      const newValue = currentValue - step;
+      this.updateCounterState(title, newValue);
+    }
+  }  
+...
+render() {	
+	return (
+      <form className="tesla-battery">
+        <h1>Range Per Charge</h1>
+        <TeslaCar wheelsize={config.wheels} />
+        <TeslaStats carstats={carstats} />
+        <div className="tesla-controls cf">
+          <TeslaCounter
+            currentValue={this.state.config.speed}
+            initValues={this.props.counterDefaultVal.speed}
+            increment={this.increment}
+            decrement={this.decrement}
+          />
+          <div className="tesla-climate-container cf">
+            <TeslaCounter
+              currentValue={this.state.config.temperature}
+              initValues={this.props.counterDefaultVal.temperature}
+              increment={this.increment}
+              decrement={this.decrement}
+            />
+          </div>
+        </div>
+        <TeslaNotice />
+    </form>
+  )
+}    
 ```
 
-Now you are ready to use the imported React Bootstrap components within your component hierarchy defined in the render method. Here is an example [`App.js`](https://gist.githubusercontent.com/gaearon/85d8c067f6af1e56277c82d19fd4da7b/raw/6158dd991b67284e9fc8d70b9d973efe87659d72/App.js) redone using React Bootstrap.
+여기서 TeslaCounter에 전달되는  initValues는 상수값으로 TeslaBattery의 상위 컴포넌트인 App으로 부터 전달된다.
+App.js를 열고 다음과 같이 counterDefaultVal 오브젝트를  TeslaBatter 컴포넌트에 전달하도록 한다.
 
-## Adding Flow
+```
+import React, { Component } from 'react';
+import './App.css';
+import Header from './components/Header/Header';
+import TeslaBattery from './containers/TeslaBattery';
 
-Flow typing is currently [not supported out of the box](https://github.com/facebookincubator/create-react-app/issues/72) with the default `.flowconfig` generated by Flow. If you run it, you might get errors like this:
+const counterDefaultVal = {
+  speed: {
+    title: "Speed",
+    unit: "mph",
+    step: 5,
+    min: 45,
+    max: 70
+  },
+  temperature: {
+    title: "Outside Temperature",
+    unit: "°",
+    step: 10,
+    min: -10,
+    max: 40
+  }
+};
 
-```js
-node_modules/fbjs/lib/Deferred.js.flow:60
- 60:     Promise.prototype.done.apply(this._promise, arguments);
-                           ^^^^ property `done`. Property not found in
-495: declare class Promise<+R> {
-     ^ Promise. See lib: /private/tmp/flow/flowlib_34952d31/core.js:495
+class App extends Component {
+  render() {
+    return (
+      <div className="App">
+        <Header />
+        <TeslaBattery counterDefaultVal={counterDefaultVal}/>
+      </div>
+    );
+  }
+}
 
-node_modules/fbjs/lib/shallowEqual.js.flow:29
- 29:     return x !== 0 || 1 / (x: $FlowIssue) === 1 / (y: $FlowIssue);
-                                   ^^^^^^^^^^ identifier `$FlowIssue`. Could not resolve name
+export default App;
 ```
 
-To fix this, change your `.flowconfig` to look like this:
 
-```ini
-[ignore]
-<PROJECT_ROOT>/node_modules/fbjs/.*
+이제 React Developer Tool을 통해 Speed 와 Temperature를 클릭하면 변경된 수치가 상태 오브젝트에 업데이트되고 리렌더링 되는 것을 확인할 수 있다.
+
+![TeslaCounter](https://lh3.googleusercontent.com/qe5PfBiZqso7MTGmv2FJX4O1u_PyJwybhpJCeuVsFgV7yfUXB3qxWXrZGrYw-bxxZaR9XfNTmA=s944 "counter.gif")
+
+
+> 아직 속도와 온도 변경에 따라 차 모델 정보가 변경되지 않는다. 이는 나중에 최종적으로 구현 할 것이다.
+
+## Aircon and Heating Controls
+우리는 온도 값을 모니터하면서 20도 이상이 되면 'heating'을 'aircon'으로 변경하고, 20도 이하가 되면 다시 'heating'으로 바꿔줘야 한다.
+
+먼저 `src/components/TeslaClimate` 디렉토리를 생성하고 그 안에 `TeslaClimate.js` 파일을 만들고 다음의 코드를 입력하자.
+
+```
+import React from 'react';
+import './TeslaClimate.css';
+
+const TeslaClimate = (props) => (
+  <div className="tesla-climate">
+    <label
+      className={`tesla-climate__item ${props.value ? 'tesla-climate__item--active' : '' }  ${!props.limit ? 'tesla-heat':''}`}
+    >
+      <p>{props.limit ? 'ac' : 'heat'} {props.value ? 'on' : 'off'}</p>
+      <i className="tesla-climate__icon"></i>
+      <input
+        type="checkbox"
+        name="climate"
+        checked={props.value}
+        onChange={() => {props.handleChangeClimate()}}
+      />
+    </label>
+  </div>
+);
+
+TeslaClimate.propTypes = {
+  value: React.PropTypes.bool,
+  limit: React.PropTypes.bool,
+  handleChangeClimate: React.PropTypes.func
+}
+
+export default TeslaClimate;
+```
+이 컴포넌트에서는 전달받은 props.value 에 따라 스타일 클래스를 바꿔주고, props.limit에 따라 텍스트를 변경해준다.
+TeslaBattery는 상태를 업데이트해야 할 때마다 실행되는 callback(이 경우엔 handleChangeClimate)을 TeslaClimate에 전달한다. `input` onChange 이벤트를 사용하여 이벤트를 알릴수 있다. TeslaBattery에 의해 전달된 callback은 setState()를 호출하여 상태를 업데이트하고 리렌더링된다.
+
+### TeslaClimate Component Style
+`src/components/TeslaClimate ` 디렉토리안에 `TeslaClimate.css` 파일을 만들고 다음 스타일을 지정한다. 코드가 길어 여기서는 생략하였으므로 [소스코드]()를 확인해서 작업하도록 하자.
+
+```
+  .tesla-climate {
+	  float: left; 
+  }
+  .tesla-climate__item {
+    cursor: pointer;
+    display: block;
+    width: 100px;
+    height: 100px;
+    border: 6px solid #f7f7f7;
+    border-radius: 50%;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+    color: #666;
+    background: #fff; 
+  }
+  ...
 ```
 
-Re-run flow, and you shouldn’t get any extra issues.
+### Import TeslaClimate component in TeslaBattery Container
+이제 우리는 `TeslaBattery`에 `callback`을 구현해 `TeslaClimate` 컴포넌트로 전달해 보겠다.
+먼저 `TeslaBattery.js`에서 `TeslaClimate ` 컴포넌트를 사용할 수 있도록 `import`한다. 그리고 `callback` 함수인 `handleChangeClimate()`를 구현하고 `constructor()`내에 바인딩한다. 그 후 `callback` 함수를 `TeslaClimate` 컴포넌트에 `props`로 전달한다.
 
-## Adding Custom Environment Variables
+```
+...
+import TeslaClimate from '../components/TeslaClimate';
+...
+constructor(props) {
+  super(props);
+  ...
+  this.handleChangeClimate = this.handleChangeClimate.bind(this);
+  ...
+}
+// handle aircon & heating click event handler
+handleChangeClimate() {
+  const config = {...this.state.config};
+  config['climate'] = !this.state.config.climate;
+  this.setState({ config });
+}
 
->Note: this feature is available with `react-scripts@0.2.3` and higher.
+...
+<TeslaClimate
+  value={this.state.config.climate}
+  limit={this.state.config.temperature > 10}
+  handleChangeClimate={this.handleChangeClimate}
+/>  
+...
+```
+이제 온도 변화에 따라 상태값이 변하게 되고 이 변경된 값이 TeslaClimate 컴포넌트로 전달되면 그 값에 따라 스타일 클래스와 텍스트가 변경되어진다. 
 
-Your project can consume variables declared in your environment as if they were declared locally in your JS files. By
-default you will have `NODE_ENV` defined for you, and any other environment variables starting with
-`REACT_APP_`. These environment variables will be defined for you on `process.env`. For example, having an environment
-variable named `REACT_APP_SECRET_CODE` will be exposed in your JS as `process.env.REACT_APP_SECRET_CODE`, in addition
-to `process.env.NODE_ENV`.
+![](https://lh3.googleusercontent.com/Bgbxy2TwAnqqX6itMN0HrWTRt6g93eJWUuCNJWiBBFgSMogW1AumIfBecMQdr9MZ0CMqiG6Gog=s944 "climate.gif")
 
->Note: Changing any environment variables will require you to restart the development server if it is running.
+##TeslaWheels Component
+드디어 마지막 컴포넌트인 TeslaWheels를 만들어 보겠다.
+늘하던데로 `src/components/TeslaWheels` 디렉토리를 생성하고 그 안에 `TeslaWheels ` 파일을 만들고 다음의 코드를 입력하자.
 
-These environment variables can be useful for displaying information conditionally based on where the project is
-deployed or consuming sensitive data that lives outside of version control.
+```
+import React from 'react';
+import './TeslaWheels.css';
 
-First, you need to have environment variables defined. For example, let’s say you wanted to consume a secret defined
-in the environment inside a `<form>`:
-
-```jsx
-render() {
+const LabelLists = (props) => {
+  const value = props.wheels.value;
+  const changeHandler = props.wheels.handleChangeWheels;
+  const sizes = [19, 21];
+  const LabelItems = sizes.map(size => (
+    <label key={size} className={`tesla-wheels__item tesla-wheels__item--${size} ${value === size ? 'tesla-wheels__item--active' : '' }`}>
+      <input
+        type="radio"
+        name="wheelsize"
+        value={size}
+        checked={value === size} 
+        onChange={() => {changeHandler(size)}} />
+      <p>
+        {size}"
+      </p>
+    </label> 
+    )
+  );
   return (
     <div>
-      <small>You are running this application in <b>{process.env.NODE_ENV}</b> mode.</small>
-      <form>
-        <input type="hidden" defaultValue={process.env.REACT_APP_SECRET_CODE} />
-      </form>
+      {LabelItems}
     </div>
   );
 }
+const TeslaWheels = (props) => (
+  <div className="tesla-wheels__component">
+    <p className="tesla-wheels__title">Wheels</p>
+    <div className="tesla-wheels__container cf">
+      <LabelLists wheels={props}/>
+    </div>
+  </div>
+);
+TeslaWheels.propTypes = {
+  value: React.PropTypes.number,
+  handleChangeWheels: React.PropTypes.func
+}
+export default TeslaWheels;
+```
+여기서 우리가 구현한것은 `TeslaStats`컴포넌트에서 `props` 배열 오브젝트를 리스트로 변환했던 것과 유사하다. 
+`JavaScript map()` 함수를 사용하여 `props.sizes` 배열을 반복한다. 매 반복마다 `size`가 담긴 `<label>` 엘리먼트들을 리턴한다. 최종적으로 `LabelItems` 리스트가  `TeslaWheels` 컴포넌트에 포함되어 렌더링 되는 구조이다. `<label>` 엘리먼트내에서는 전달된 wheel size에 따라 해당 클래스를 변경함으로서 wheel animation 효과를 나타낸다. 
+
+### TeslaWheels Component Style
+`src/components/TeslaWheels ` 디렉토리안에 `TeslaWheels.css` 파일을 만들고 다음 스타일을 지정한다. 코드가 길어 여기서는 생략하였으므로 [소스코드]()를 확인해서 작업하도록 하자.
+
+```
+.tesla-wheels__component {
+  float: left;
+  width: 355px;
+}
+.tesla-wheels__title {
+  letter-spacing: 2px;
+  font-size: 16px;
+}
+...
 ```
 
-During the build, `process.env.REACT_APP_SECRET_CODE` will be replaced with the current value of the `REACT_APP_SECRET_CODE` environment variable. Remember that the `NODE_ENV` variable will be set for you automatically.
+### Import TeslaWheels component in TeslaBattery Container
+마지막으로 `TeslaBattery`에 `callback`을 구현해 `TeslaWheels` 컴포넌트로 전달한다.
+먼저 `TeslaBattery.js`에서 `TeslaWheels` 컴포넌트를 사용할 수 있도록 `import`한다. 그리고 `callback`함수인 `handleChangeWheels()`를 구현하고 `constructor()`내에 바인딩한다. 그 후 `callback`함수를 `TeslaWheels `컴포넌트에 `props`로 전달한다.
 
-When you load the app in the browser and inspect the `<input>`, you will see its value set to `abcdef`, and the bold text will show the environment provided when using `npm start`:
 
-```html
-<div>
-  <small>You are running this application in <b>development</b> mode.</small>
-  <form>
-    <input type="hidden" value="abcdef" />
-  </form>
-</div>
+```
+...
+import TeslaWheels from '../components/TeslaWheels';
+...
+constructor(props) {
+    super(props);
+    this.calculateStats = this.calculateStats.bind(this);
+    this.increment = this.increment.bind(this);
+    this.decrement = this.decrement.bind(this);
+    this.handleChangeClimate = this.handleChangeClimate.bind(this);
+    this.handleChangeWheels = this.handleChangeWheels.bind(this);
+    this.statsUpdate = this.statsUpdate.bind(this);
+...
+handleChangeWheels(size) {
+  const config = {...this.state.config};
+  config['wheels'] = size;
+  this.setState({ config });
+}
+...
+<TeslaWheels
+  value={this.state.config.wheels}
+  handleChangeWheels={this.handleChangeWheels}
+/>
+...
 ```
 
-Having access to the `NODE_ENV` is also useful for performing actions conditionally:
+wheels animation이 완성된 결과 화면은 다음과 같다.
+![](http://g.recordit.co/ZEz2AupcIm.gif)
 
-```js
-if (process.env.NODE_ENV !== 'production') {
-  analytics.disable();
+## State Update
+
+드디어 완성? 
+사용자가 여러 조건값들을 변경해도 아직 차 모델 값이 적절하게 바뀌지 않는다.
+지금까지 우리는 이벤트가 발생할 때마다  우리 앱 상태의 한 부분만을 업데이트해왔다.
+
+```
+this.setState({ config });
+```
+
+이제 config 상태 값이 변경될때마다 carstats 상태 값도 변경되도록 해보자.
+
+```
+statsUpdate() {
+  const carModels = ['60', '60D', '75', '75D', '90D', 'P100D'];
+  // Fetch model info from BatteryService and calculate then update state
+  this.setState({
+  carstats: this.calculateStats(carModels, this.state.config)
+  })
 }
 ```
 
-The above form is looking for a variable called `REACT_APP_SECRET_CODE` from the environment. In order to consume this
-value, we need to have it defined in the environment. This can be done using two ways: either in your shell or in
-a `.env` file.
-
-### Adding Temporary Environment Variables In Your Shell
-
-Defining environment variables can vary between OSes. It's also important to know that this manner is temporary for the
-life of the shell session.
-
-#### Windows (cmd.exe)
-
-```cmd
-set REACT_APP_SECRET_CODE=abcdef&&npm start
-```
-
-(Note: the lack of whitespace is intentional.)
-
-#### Linux, OS X (Bash)
-
-```bash
-REACT_APP_SECRET_CODE=abcdef npm start
-```
-
-### Adding Development Environment Variables In `.env`
-
->Note: this feature is available with `react-scripts@0.5.0` and higher.
-
-To define permanent environment variables, create a file called `.env` in the root of your project:
+carModels와 현재 변경된 상태값을 입력으로 받아 변경된 carStats을 앱 state에 반영하는 함수를 만들고 이를 callback으로 this.setState()에 전달한다. 이렇게 함으로서 asyncronus 방식으로 동작하는 setState() 에서 cofig 오브젝트를 먼저 업데이트 하고 이를 기반으로 변경된 stats를 화면에 렌더링하는 것이 가능해진다.
 
 ```
-REACT_APP_SECRET_CODE=abcdef
-```
+this.setState({ config }, () => {this.statsUpdate()});
+``` 
 
-These variables will act as the defaults if the machine does not explicitly set them.<br>
-Please refer to the [dotenv documentation](https://github.com/motdotla/dotenv) for more details.
-
->Note: If you are defining environment variables for development, your CI and/or hosting platform will most likely need
-these defined as well. Consult their documentation how to do this. For example, see the documentation for [Travis CI](https://docs.travis-ci.com/user/environment-variables/) or [Heroku](https://devcenter.heroku.com/articles/config-vars).
-
-## Can I Use Decorators?
-
-Many popular libraries use [decorators](https://medium.com/google-developers/exploring-es7-decorators-76ecb65fb841) in their documentation.<br>
-Create React App doesn’t support decorator syntax at the moment because:
-
-* It is an experimental proposal and is subject to change.
-* The current specification version is not officially supported by Babel.
-* If the specification changes, we won’t be able to write a codemod because we don’t use them internally at Facebook.
-
-However in many cases you can rewrite decorator-based code without decorators just as fine.<br>
-Please refer to these two threads for reference:
-
-* [#214](https://github.com/facebookincubator/create-react-app/issues/214)
-* [#411](https://github.com/facebookincubator/create-react-app/issues/411)
-
-Create React App will add decorator support when the specification advances to a stable stage.
-
-## Integrating with a Node Backend
-
-Check out [this tutorial](https://www.fullstackreact.com/articles/using-create-react-app-with-a-server/) for instructions on integrating an app with a Node backend running on another port, and using `fetch()` to access it. You can find the companion GitHub repository [here](https://github.com/fullstackreact/food-lookup-demo).
-
-## Proxying API Requests in Development
-
->Note: this feature is available with `react-scripts@0.2.3` and higher.
-
-People often serve the front-end React app from the same host and port as their backend implementation.<br>
-For example, a production setup might look like this after the app is deployed:
+이로써 모든 퍼즐이 완성되었다. TeslaBattery의 전체 코드는 다음과 같다.
 
 ```
-/             - static server returns index.html with React app
-/todos        - static server returns index.html with React app
-/api/todos    - server handles any /api/* requests using the backend implementation
-```
-
-Such setup is **not** required. However, if you **do** have a setup like this, it is convenient to write requests like `fetch('/api/todos')` without worrying about redirecting them to another host or port during development.
-
-To tell the development server to proxy any unknown requests to your API server in development, add a `proxy` field to your `package.json`, for example:
-
-```js
-  "proxy": "http://localhost:4000",
-```
-
-This way, when you `fetch('/api/todos')` in development, the development server will recognize that it’s not a static asset, and will proxy your request to `http://localhost:4000/api/todos` as a fallback. The development server will only attempt to send requests without a `text/html` accept header to the proxy.
-
-Conveniently, this avoids [CORS issues](http://stackoverflow.com/questions/21854516/understanding-ajax-cors-and-security-considerations) and error messages like this in development:
-
-```
-Fetch API cannot load http://localhost:4000/api/todos. No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'http://localhost:3000' is therefore not allowed access. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
-```
-
-Keep in mind that `proxy` only has effect in development (with `npm start`), and it is up to you to ensure that URLs like `/api/todos` point to the right thing in production. You don’t have to use the `/api` prefix. Any unrecognized request without a `text/html` accept header will be redirected to the specified `proxy`.
-
-Currently the `proxy` option only handles HTTP requests, and it won’t proxy WebSocket connections.<br>
-If the `proxy` option is **not** flexible enough for you, alternatively you can:
-
-* Enable CORS on your server ([here’s how to do it for Express](http://enable-cors.org/server_expressjs.html)).
-* Use [environment variables](#adding-custom-environment-variables) to inject the right server host and port into your app.
-
-## Using HTTPS in Development
-
->Note: this feature is available with `react-scripts@0.4.0` and higher.
-
-You may require the dev server to serve pages over HTTPS. One particular case where this could be useful is when using [the "proxy" feature](#proxying-api-requests-in-development) to proxy requests to an API server when that API server is itself serving HTTPS.
-
-To do this, set the `HTTPS` environment variable to `true`, then start the dev server as usual with `npm start`:
-
-#### Windows (cmd.exe)
-
-```cmd
-set HTTPS=true&&npm start
-```
-
-(Note: the lack of whitespace is intentional.)
-
-#### Linux, OS X (Bash)
-
-```bash
-HTTPS=true npm start
-```
-
-Note that the server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
-
-## Generating Dynamic `<meta>` Tags on the Server
-
-Since Create React App doesn’t support server rendering, you might be wondering how to make `<meta>` tags dynamic and reflect the current URL. To solve this, we recommend to add placeholders into the HTML, like this:
-
-```html
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta property="og:title" content="%OG_TITLE%">
-    <meta property="og:description" content="%OG_DESCRIPTION%">
-```
-
-Then, on the server, regardless of the backend you use, you can read `index.html` into memory and replace `%OG_TITLE%`, `%OG_DESCRIPTION%`, and any other placeholders with values depending on the current URL. Just make sure to sanitize and escape the interpolated values so that they are safe to embed into HTML!
-
-If you use a Node server, you can even share the route matching logic between the client and the server. However duplicating it also works fine in simple cases.
-
-## Running Tests
-
->Note: this feature is available with `react-scripts@0.3.0` and higher.<br>
->[Read the migration guide to learn how to enable it in older projects!](https://github.com/facebookincubator/create-react-app/blob/master/CHANGELOG.md#migrating-from-023-to-030)
-
-Create React App uses [Jest](https://facebook.github.io/jest/) as its test runner. To prepare for this integration, we did a [major revamp](https://facebook.github.io/jest/blog/2016/09/01/jest-15.html) of Jest so if you heard bad things about it years ago, give it another try.
-
-Jest is a Node-based runner. This means that the tests always run in a Node environment and not in a real browser. This lets us enable fast iteration speed and prevent flakiness.
-
-While Jest provides browser globals such as `window` thanks to [jsdom](https://github.com/tmpvar/jsdom), they are only approximations of the real browser behavior. Jest is intended to be used for unit tests of your logic and your components rather than the DOM quirks.
-
-We recommend that you use a separate tool for browser end-to-end tests if you need them. They are beyond the scope of Create React App.
-
-### Filename Conventions
-
-Jest will look for test files with any of the following popular naming conventions:
-
-* Files with `.js` suffix in `__tests__` folders.
-* Files with `.test.js` suffix.
-* Files with `.spec.js` suffix.
-
-The `.test.js` / `.spec.js` files (or the `__tests__` folders) can be located at any depth under the `src` top level folder.
-
-We recommend to put the test files (or `__tests__` folders) next to the code they are testing so that relative imports appear shorter. For example, if `App.test.js` and `App.js` are in the same folder, the test just needs to `import App from './App'` instead of a long relative path. Colocation also helps find tests more quickly in larger projects.
-
-### Command Line Interface
-
-When you run `npm test`, Jest will launch in the watch mode. Every time you save a file, it will re-run the tests, just like `npm start` recompiles the code.
-
-The watcher includes an interactive command-line interface with the ability to run all tests, or focus on a search pattern. It is designed this way so that you can keep it open and enjoy fast re-runs. You can learn the commands from the “Watch Usage” note that the watcher prints after every run:
-
-![Jest watch mode](http://facebook.github.io/jest/img/blog/15-watch.gif)
-
-### Version Control Integration
-
-By default, when you run `npm test`, Jest will only run the tests related to files changed since the last commit. This is an optimization designed to make your tests runs fast regardless of how many tests you have. However it assumes that you don’t often commit the code that doesn’t pass the tests.
-
-Jest will always explicitly mention that it only ran tests related to the files changed since the last commit. You can also press `a` in the watch mode to force Jest to run all tests.
-
-Jest will always run all tests on a [continuous integration](#continuous-integration) server or if the project is not inside a Git or Mercurial repository.
-
-### Writing Tests
-
-To create tests, add `it()` (or `test()`) blocks with the name of the test and its code. You may optionally wrap them in `describe()` blocks for logical grouping but this is neither required nor recommended.
-
-Jest provides a built-in `expect()` global function for making assertions. A basic test could look like this:
-
-```js
-import sum from './sum';
-
-it('sums numbers', () => {
-  expect(sum(1, 2)).toEqual(3);
-  expect(sum(2, 2)).toEqual(4);
-});
-```
-
-All `expect()` matchers supported by Jest are [extensively documented here](http://facebook.github.io/jest/docs/api.html#expect-value).<br>
-You can also use [`jest.fn()` and `expect(fn).toBeCalled()`](http://facebook.github.io/jest/docs/api.html#tobecalled) to create “spies” or mock functions.
-
-### Testing Components
-
-There is a broad spectrum of component testing techniques. They range from a “smoke test” verifying that a component renders without throwing, to shallow rendering and testing some of the output, to full rendering and testing component lifecycle and state changes.
-
-Different projects choose different testing tradeoffs based on how often components change, and how much logic they contain. If you haven’t decided on a testing strategy yet, we recommend that you start with creating simple smoke tests for your components:
-
-```js
 import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import './TeslaBattery.css';
+import TeslaNotice from '../components/TeslaNotice/TeslaNotice';
+import TeslaCar from '../components/TeslaCar/TeslaCar';
+import TeslaStats from '../components/TeslaStats/TeslaStats';
+import TeslaCounter from '../components/TeslaCounter/TeslaCounter';
+import TeslaClimate from '../components/TeslaClimate/TeslaClimate';
+import TeslaWheels from '../components/TeslaWheels/TeslaWheels';
+import { getModelData } from '../services/BatteryService';
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-});
-```
+class TeslaBattery extends React.Component {
+  constructor(props) {
+    super(props);
 
-This test mounts a component and makes sure that it didn’t throw during rendering. Tests like this provide a lot value with very little effort so they are great as a starting point, and this is the test you will find in `src/App.test.js`.
+    this.calculateStats = this.calculateStats.bind(this);
+    this.statsUpdate = this.statsUpdate.bind(this);
+    this.increment = this.increment.bind(this);
+    this.decrement = this.decrement.bind(this);
+    this.updateCounterState = this.updateCounterState.bind(this);
+    this.handleChangeClimate = this.handleChangeClimate.bind(this);
+    this.handleChangeWheels = this.handleChangeWheels.bind(this);
 
-When you encounter bugs caused by changing components, you will gain a deeper insight into which parts of them are worth testing in your application. This might be a good time to introduce more specific tests asserting specific expected output or behavior.
-
-If you’d like to test components in isolation from the child components they render, we recommend using [`shallow()` rendering API](http://airbnb.io/enzyme/docs/api/shallow.html) from [Enzyme](http://airbnb.io/enzyme/). You can write a smoke test with it too:
-
-```sh
-npm install --save-dev enzyme react-addons-test-utils
-```
-
-```js
-import React from 'react';
-import { shallow } from 'enzyme';
-import App from './App';
-
-it('renders without crashing', () => {
-  shallow(<App />);
-});
-```
-
-Unlike the previous smoke test using `ReactDOM.render()`, this test only renders `<App>` and doesn’t go deeper. For example, even if `<App>` itself renders a `<Button>` that throws, this test will pass. Shallow rendering is great for isolated unit tests, but you may still want to create some full rendering tests to ensure the components integrate correctly. Enzyme supports [full rendering with `mount()`](http://airbnb.io/enzyme/docs/api/mount.html), and you can also use it for testing state changes and component lifecycle.
-
-You can read the [Enzyme documentation](http://airbnb.io/enzyme/) for more testing techniques. Enzyme documentation uses Chai and Sinon for assertions but you don’t have to use them because Jest provides built-in `expect()` and `jest.fn()` for spies.
-
-Here is an example from Enzyme documentation that asserts specific output, rewritten to use Jest matchers:
-
-```js
-import React from 'react';
-import { shallow } from 'enzyme';
-import App from './App';
-
-it('renders welcome message', () => {
-  const wrapper = shallow(<App />);
-  const welcome = <h2>Welcome to React</h2>;
-  // expect(wrapper.contains(welcome)).to.equal(true);
-  expect(wrapper.contains(welcome)).toEqual(true);
-});
-```
-
-All Jest matchers are [extensively documented here](http://facebook.github.io/jest/docs/api.html#expect-value).<br>
-Nevertheless you can use a third-party assertion library like [Chai](http://chaijs.com/) if you want to, as described below.
-
-### Using Third Party Assertion Libraries
-
-We recommend that you use `expect()` for assertions and `jest.fn()` for spies. If you are having issues with them please [file those against Jest](https://github.com/facebook/jest/issues/new), and we’ll fix them. We intend to keep making them better for React, supporting, for example, [pretty-printing React elements as JSX](https://github.com/facebook/jest/pull/1566).
-
-However, if you are used to other libraries, such as [Chai](http://chaijs.com/) and [Sinon](http://sinonjs.org/), or if you have existing code using them that you’d like to port over, you can import them normally like this:
-
-```js
-import sinon from 'sinon';
-import { expect } from 'chai';
-```
-
-and then use them in your tests like you normally do.
-
-### Initializing Test Environment
-
->Note: this feature is available with `react-scripts@0.4.0` and higher.
-
-If your app uses a browser API that you need to mock in your tests or if you just need a global setup before running your tests, add a `src/setupTests.js` to your project. It will be automatically executed before running your tests.
-
-For example:
-
-#### `src/setupTests.js`
-```js
-const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  clear: jest.fn()
-};
-global.localStorage = localStorageMock
-```
-
-### Focusing and Excluding Tests
-
-You can replace `it()` with `xit()` to temporarily exclude a test from being executed.<br>
-Similarly, `fit()` lets you focus on a specific test without running any other tests.
-
-### Coverage Reporting
-
-Jest has an integrated coverage reporter that works well with ES6 and requires no configuration.<br>
-Run `npm test -- --coverage` (note extra `--` in the middle) to include a coverage report like this:
-
-![coverage report](http://i.imgur.com/5bFhnTS.png)
-
-Note that tests run much slower with coverage so it is recommended to run it separately from your normal workflow.
-
-### Continuous Integration
-
-By default `npm test` runs the watcher with interactive CLI. However, you can force it to run tests once and finish the process by setting an environment variable called `CI`.
-
-When creating a build of your application with `npm run build` linter warnings are not checked by default. Like `npm test`, you can force the build to perform a linter warning check by setting the environment variable `CI`. If any warnings are encountered then the build fails.
-
-Popular CI servers already set the environment variable `CI` by default but you can do this yourself too:
-
-### On CI servers
-#### Travis CI
-
-1. Following the [Travis Getting started](https://docs.travis-ci.com/user/getting-started/) guide for syncing your GitHub repository with Travis.  You may need to initialize some settings manually in your [profile](https://travis-ci.org/profile) page.
-1. Add a `.travis.yml` file to your git repository.
-```
-language: node_js
-node_js:
-  - 4
-  - 6
-cache:
-  directories:
-    - node_modules
-script:
-  - npm test
-  - npm run build
-```
-1. Trigger your first build with a git push.
-1. [Customize your Travis CI Build](https://docs.travis-ci.com/user/customizing-the-build/) if needed.
-
-### On your own environment
-##### Windows (cmd.exe)
-
-```cmd
-set CI=true&&npm test
-```
-
-```cmd
-set CI=true&&npm run build
-```
-
-(Note: the lack of whitespace is intentional.)
-
-##### Linux, OS X (Bash)
-
-```bash
-CI=true npm test
-```
-
-```bash
-CI=true npm run build
-```
-
-The test command will force Jest to run tests once instead of launching the watcher.
-
->  If you find yourself doing this often in development, please [file an issue](https://github.com/facebookincubator/create-react-app/issues/new) to tell us about your use case because we want to make watcher the best experience and are open to changing how it works to accommodate more workflows.
-
-The build command will check for linter warnings and fail if any are found.
-
-### Disabling jsdom
-
-By default, the `package.json` of the generated project looks like this:
-
-```js
-  // ...
-  "scripts": {
-    // ...
-    "test": "react-scripts test --env=jsdom"
+    this.state = {
+      carstats: [],
+      config: {
+        speed: 55,
+        temperature: 20,
+        climate: true,
+        wheels: 19
+      }
+    }
   }
-```
 
-If you know that none of your tests depend on [jsdom](https://github.com/tmpvar/jsdom), you can safely remove `--env=jsdom`, and your tests will run faster.<br>
-To help you make up your mind, here is a list of APIs that **need jsdom**:
-
-* Any browser globals like `window` and `document`
-* [`ReactDOM.render()`](https://facebook.github.io/react/docs/top-level-api.html#reactdom.render)
-* [`TestUtils.renderIntoDocument()`](https://facebook.github.io/react/docs/test-utils.html#renderintodocument) ([a shortcut](https://github.com/facebook/react/blob/34761cf9a252964abfaab6faf74d473ad95d1f21/src/test/ReactTestUtils.js#L83-L91) for the above)
-* [`mount()`](http://airbnb.io/enzyme/docs/api/mount.html) in [Enzyme](http://airbnb.io/enzyme/index.html)
-
-In contrast, **jsdom is not needed** for the following APIs:
-
-* [`TestUtils.createRenderer()`](https://facebook.github.io/react/docs/test-utils.html#shallow-rendering) (shallow rendering)
-* [`shallow()`](http://airbnb.io/enzyme/docs/api/shallow.html) in [Enzyme](http://airbnb.io/enzyme/index.html)
-
-Finally, jsdom is also not needed for [snapshot testing](http://facebook.github.io/jest/blog/2016/07/27/jest-14.html). Longer term, this is the direction we are interested in exploring, but snapshot testing is [not fully baked yet](https://github.com/facebookincubator/create-react-app/issues/372) so we don’t officially encourage its usage yet.
-
-### Experimental Snapshot Testing
-
-Snapshot testing is a new feature of Jest that automatically generates text snapshots of your components and saves them on the disk so if the UI output changes, you get notified without manually writing any assertions on the component output.
-
-This feature is experimental and still [has major usage issues](https://github.com/facebookincubator/create-react-app/issues/372) so we only encourage you to use it if you like experimental technology. We intend to gradually improve it over time and eventually offer it as the default solution for testing React components, but this will take time. [Read more about snapshot testing.](http://facebook.github.io/jest/blog/2016/07/27/jest-14.html)
-
-### Editor Integration
-
-If you use [Visual Studio Code](https://code.visualstudio.com), there is a [Jest extension](https://github.com/orta/vscode-jest) which works with Create React App out of the box. This provides a lot of IDE-like features while using a text editor: showing the status of a test run with potential fail messages inline, starting and stopping the watcher automatically, and offering one-click snapshot updates. 
-
-![VS Code Jest Preview](https://cloud.githubusercontent.com/assets/49038/20795349/a032308a-b7c8-11e6-9b34-7eeac781003f.png)
-
-## Developing Components in Isolation
-
-Usually, in an app, you have a lot of UI components, and each of them has many different states.
-For an example, a simple button component could have following states:
-
-* With a text label.
-* With an emoji.
-* In the disabled mode.
-
-Usually, it’s hard to see these states without running a sample app or some examples.
-
-Create React App doesn't include any tools for this by default, but you can easily add [React Storybook](https://github.com/kadirahq/react-storybook) to your project. **It is a third-party tool that lets you develop components and see all their states in isolation from your app**.
-
-![React Storybook Demo](http://i.imgur.com/7CIAWpB.gif)
-
-You can also deploy your Storybook as a static app. This way, everyone in your team can view and review different states of UI components without starting a backend server or creating an account in your app.
-
-**Here’s how to setup your app with Storybook:**
-
-First, install the following npm package globally:
-
-```sh
-npm install -g getstorybook
-```
-
-Then, run the following command inside your app’s directory:
-
-```sh
-getstorybook
-```
-
-After that, follow the instructions on the screen.
-
-Learn more about React Storybook:
-
-* Screencast: [Getting Started with React Storybook](https://egghead.io/lessons/react-getting-started-with-react-storybook)
-* [GitHub Repo](https://github.com/kadirahq/react-storybook)
-* [Documentation](https://getstorybook.io/docs)
-* [Snapshot Testing](https://github.com/kadirahq/storyshots) with React Storybook
-
-## Making a Progressive Web App
-
-You can turn your React app into a [Progressive Web App](https://developers.google.com/web/progressive-web-apps/) by following the steps in [this repository](https://github.com/jeffposnick/create-react-pwa).
-
-## Deployment
-
-`npm run build` creates a `build` directory with a production build of your app. Set up your favourite HTTP server so that a visitor to your site is served `index.html`, and requests to static paths like `/static/js/main.<hash>.js` are served with the contents of the `/static/js/main.<hash>.js` file. For example, Python contains a built-in HTTP server that can serve static files:
-
-```sh
-cd build
-python -m SimpleHTTPServer 9000
-```
-
-If you're using [Node](https://nodejs.org/) and [Express](http://expressjs.com/) as a server, it might look like this:
-
-```javascript
-const express = require('express');
-const path = require('path');
-const app = express();
-
-app.use(express.static('./build'));
-
-app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, './build', 'index.html'));
-});
-
-app.listen(9000);
-```
-
-Create React App is not opinionated about your choice of web server. Any static file server will do. The `build` folder with static assets is the only output produced by Create React App.
-
-However this is not quite enough if you use client-side routing. Read the next section if you want to support URLs like `/todos/42` in your single-page app.
-
-### Serving Apps with Client-Side Routing
-
-If you use routers that use the HTML5 [`pushState` history API](https://developer.mozilla.org/en-US/docs/Web/API/History_API#Adding_and_modifying_history_entries) under the hood (for example, [React Router](https://github.com/ReactTraining/react-router) with `browserHistory`), many static file servers will fail. For example, if you used React Router with a route for `/todos/42`, the development server will respond to `localhost:3000/todos/42` properly, but an Express serving a production build as above will not.
-
-This is because when there is a fresh page load for a `/todos/42`, the server looks for the file `build/todos/42` and does not find it. The server needs to be configured to respond to a request to `/todos/42` by serving `index.html`. For example, we can amend our Express example above to serve `index.html` for any unknown paths:
-
-```diff
- app.use(express.static('./build'));
-
--app.get('/', function (req, res) {
-+app.get('/*', function (req, res) {
-   res.sendFile(path.join(__dirname, './build', 'index.html'));
- });
-```
-
-Now requests to `/todos/42` will be handled correctly both in development and in production.
-
-### Building for Relative Paths
-
-By default, Create React App produces a build assuming your app is hosted at the server root.<br>
-To override this, specify the `homepage` in your `package.json`, for example:
-
-```js
-  "homepage": "http://mywebsite.com/relativepath",
-```
-
-This will let Create React App correctly infer the root path to use in the generated HTML file.
-
-
-### Firebase
-
-Install the Firebase CLI if you haven't already by running `npm install -g firebase-tools`. Sign up for a [Firebase account](https://console.firebase.google.com/) and create a new project. Run `firebase login` and login with your previous created Firebase account.
-
-Then run the `firebase init` command from your project's root. You need to choose the **Hosting: Configure and deploy Firebase Hosting sites** and choose the Firebase project you created in the previous step. You will need to agree with `database.rules.json` being created, choose `build` as the public directory, and also agree to **Configure as a single-page app** by replying with `y`.
-
-```sh
-    === Project Setup
-
-    First, let's associate this project directory with a Firebase project.
-    You can create multiple project aliases by running firebase use --add,
-    but for now we'll just set up a default project.
-
-    ? What Firebase project do you want to associate as default? Example app (example-app-fd690)
-
-    === Database Setup
-
-    Firebase Realtime Database Rules allow you to define how your data should be
-    structured and when your data can be read from and written to.
-
-    ? What file should be used for Database Rules? database.rules.json
-    ✔  Database Rules for example-app-fd690 have been downloaded to database.rules.json.
-    Future modifications to database.rules.json will update Database Rules when you run
-    firebase deploy.
-
-    === Hosting Setup
-
-    Your public directory is the folder (relative to your project directory) that
-    will contain Hosting assets to uploaded with firebase deploy. If you
-    have a build process for your assets, use your build's output directory.
-
-    ? What do you want to use as your public directory? build
-    ? Configure as a single-page app (rewrite all urls to /index.html)? Yes
-    ✔  Wrote build/index.html
-
-    i  Writing configuration info to firebase.json...
-    i  Writing project information to .firebaserc...
-
-    ✔  Firebase initialization complete!
-```
-
-Now, after you create a production build with `npm run build`, you can deploy it by running `firebase deploy`.
-
-```sh
-    === Deploying to 'example-app-fd690'...
-
-    i  deploying database, hosting
-    ✔  database: rules ready to deploy.
-    i  hosting: preparing build directory for upload...
-    Uploading: [==============================          ] 75%✔  hosting: build folder uploaded successfully
-    ✔  hosting: 8 files uploaded successfully
-    i  starting release process (may take several minutes)...
-
-    ✔  Deploy complete!
-
-    Project Console: https://console.firebase.google.com/project/example-app-fd690/overview
-    Hosting URL: https://example-app-fd690.firebaseapp.com
-```
-
-For more information see [Add Firebase to your JavaScript Project](https://firebase.google.com/docs/web/setup).
-
-### GitHub Pages
-
->Note: this feature is available with `react-scripts@0.2.0` and higher.
-
-#### Step 1: Add `homepage` to `package.json`
-
-**The step below is important!**<br>
-**If you skip it, your app will not deploy correctly.**
-
-Open your `package.json` and add a `homepage` field:
-
-```js
-  "homepage": "https://myusername.github.io/my-app",
-```
-
-Create React App uses the `homepage` field to determine the root URL in the built HTML file.
-
-#### Step 2: Install `gh-pages` and add `deploy` to `scripts` in `package.json`
-
-Now, whenever you run `npm run build`, you will see a cheat sheet with instructions on how to deploy to GitHub Pages.
-
-To publish it at [https://myusername.github.io/my-app](https://myusername.github.io/my-app), run:
-
-```sh
-npm install --save-dev gh-pages
-```
-
-Add the following script in your `package.json`:
-
-```js
-  // ...
-  "scripts": {
-    // ...
-    "deploy": "npm run build&&gh-pages -d build"
+  calculateStats = (models, value) => {
+    const dataModels = getModelData();
+    return models.map(model => {
+      const { speed, temperature, climate, wheels } = value;
+      const miles = dataModels[model][wheels][climate ? 'on' : 'off'].speed[speed][temperature];
+      return {
+        model,
+        miles
+      };
+    });
   }
+
+  statsUpdate() {
+    const carModels = ['60', '60D', '75', '75D', '90D', 'P100D'];
+    // Fetch model info from BatteryService and calculate then update state
+    this.setState({
+      carstats: this.calculateStats(carModels, this.state.config)
+    })
+  }
+
+  componentDidMount() {
+    this.statsUpdate();
+  }
+
+  updateCounterState(title, newValue) {
+    const config = { ...this.state.config };
+    // update config state with new value
+    title === 'Speed' ? config['speed'] = newValue : config['temperature'] = newValue;
+    // update our state
+    this.setState({ config }, () => {this.statsUpdate()});
+  }
+
+  increment(e, title) {
+    e.preventDefault();
+    let currentValue, maxValue, step;
+    const { speed, temperature } = this.props.counterDefaultVal;
+    if (title === 'Speed') {
+      currentValue = this.state.config.speed;
+      maxValue = speed.max;
+      step = speed.step;
+    } else {
+      currentValue = this.state.config.temperature;
+      maxValue = temperature.max;
+      step = temperature.step;
+    }
+
+    if (currentValue < maxValue) {
+      const newValue = currentValue + step;
+      this.updateCounterState(title, newValue);
+    }
+  }
+
+  decrement(e, title) {
+    e.preventDefault();
+    let currentValue, minValue, step;
+    const { speed, temperature } = this.props.counterDefaultVal;
+    if (title === 'Speed') {
+      currentValue = this.state.config.speed;
+      minValue = speed.min;
+      step = speed.step;
+    } else {
+      currentValue = this.state.config.temperature;
+      minValue = temperature.min;
+      step = temperature.step;
+    }
+
+    if (currentValue > minValue) {
+      const newValue = currentValue - step;
+      this.updateCounterState(title, newValue);
+    }
+  }
+
+  // handle aircon & heating click event handler
+  handleChangeClimate() {
+    const config = {...this.state.config};
+    config['climate'] = !this.state.config.climate;
+    this.setState({ config }, () => {this.statsUpdate()});
+  }
+
+  // handle Wheels click event handler
+  handleChangeWheels(size) {
+    const config = {...this.state.config};
+    config['wheels'] = size;
+    this.setState({ config }, () => {this.statsUpdate()});
+  }  
+
+  render() {    
+    const { config, carstats } = this.state;
+    return (
+      <form className="tesla-battery">
+        <h1>Range Per Charge</h1>
+        <TeslaCar wheelsize={config.wheels} />
+        <TeslaStats carstats={carstats} />
+        <div className="tesla-controls cf">
+          <TeslaCounter
+            currentValue={this.state.config.speed}
+            initValues={this.props.counterDefaultVal.speed}
+            increment={this.increment}
+            decrement={this.decrement}
+          />
+          <div className="tesla-climate-container cf">
+            <TeslaCounter
+              currentValue={this.state.config.temperature}
+              initValues={this.props.counterDefaultVal.temperature}
+              increment={this.increment}
+              decrement={this.decrement}
+            />
+            <TeslaClimate
+              value={this.state.config.climate}
+              limit={this.state.config.temperature > 10}
+              handleChangeClimate={this.handleChangeClimate}
+            />
+          </div>
+          <TeslaWheels
+            value={this.state.config.wheels}
+            handleChangeWheels={this.handleChangeWheels}
+          />
+        </div>
+        <TeslaNotice />
+      </form>
+    )
+  }
+}
+
+export default TeslaBattery;
 ```
 
-(Note: the lack of whitespace is intentional.)
 
-#### Step 3: Deploy the site by running `npm run deploy`
+와우! 완성된 Tesla Batter Range Calculator는 다음과 같다.
 
-Then run:
 
-```sh
-npm run deploy
-```
-
-#### Step 4: Ensure your project's settings use `gh-pages`
-
-Finally, make sure **GitHub Pages** option in your GitHub project settings is set to use the `gh-pages` branch:
-
-<img src="http://i.imgur.com/HUjEr9l.png" width="500" alt="gh-pages branch setting">
-
-#### Step 5: Optionally, configure the domain
-
-You can configure a custom domain with GitHub Pages by adding a `CNAME` file to the `public/` folder.
-
-#### Notes on client-side routing
-
-GitHub Pages doesn't support routers that use the HTML5 `pushState` history API under the hood (for example, React Router using `browserHistory`). This is because when there is a fresh page load for a url like `http://user.github.io/todomvc/todos/42`, where `/todos/42` is a frontend route, the GitHub Pages server returns 404 because it knows nothing of `/todos/42`. If you want to add a router to a project hosted on GitHub Pages, here are a couple of solutions:
-
-* You could switch from using HTML5 history API to routing with hashes. If you use React Router, you can switch to `hashHistory` for this effect, but the URL will be longer and more verbose (for example, `http://user.github.io/todomvc/#/todos/42?_k=yknaj`). [Read more](https://github.com/reactjs/react-router/blob/master/docs/guides/Histories.md#histories) about different history implementations in React Router.
-* Alternatively, you can use a trick to teach GitHub Pages to handle 404 by redirecting to your `index.html` page with a special redirect parameter. You would need to add a `404.html` file with the redirection code to the `build` folder before deploying your project, and you’ll need to add code handling the redirect parameter to `index.html`. You can find a detailed explanation of this technique [in this guide](https://github.com/rafrex/spa-github-pages).
-
-### Heroku
-
-Use the [Heroku Buildpack for Create React App](https://github.com/mars/create-react-app-buildpack).<br>
-You can find instructions in [Deploying React with Zero Configuration](https://blog.heroku.com/deploying-react-with-zero-configuration).
-
-### Modulus
-
-See the [Modulus blog post](http://blog.modulus.io/deploying-react-apps-on-modulus) on how to deploy your react app to Modulus.
-
-## Netlify
-
-**To do a manual deploy to Netlify's CDN:**
-
-```sh
-npm install netlify-cli
-netlify deploy
-```
-
-Choose `build` as the path to deploy.
-
-**To setup continuous delivery:**
-
-With this setup Netlify will build and deploy when you push to git or open a pull request:
-
-1. [Start a new netlify project](https://app.netlify.com/signup)
-2. Pick your Git hosting service and select your repository
-3. Click `Build your site`
-
-**Support for client-side routing:**
-
-To support `pushState`, make sure to create a `public/_redirects` file with the following rewrite rules:
-
-```
-/*  /index.html  200
-```
-
-When you build the project, Create React App will place the `public` folder contents into the build output.
-
-### Now
-
-See [this example](https://github.com/xkawi/create-react-app-now) for a zero-configuration single-command deployment with [now](https://zeit.co/now).
-
-### S3 and CloudFront
-
-See this [blog post](https://medium.com/@omgwtfmarc/deploying-create-react-app-to-s3-or-cloudfront-48dae4ce0af) on how to deploy your React app to Amazon Web Services [S3](https://aws.amazon.com/s3) and [CloudFront](https://aws.amazon.com/cloudfront/).
-
-### Surge
-
-Install the Surge CLI if you haven't already by running `npm install -g surge`. Run the `surge` command and log in you or create a new account. You just need to specify the *build* folder and your custom domain, and you are done.
-
-```sh
-              email: email@domain.com
-           password: ********
-       project path: /path/to/project/build
-               size: 7 files, 1.8 MB
-             domain: create-react-app.surge.sh
-             upload: [====================] 100%, eta: 0.0s
-   propagate on CDN: [====================] 100%
-               plan: Free
-              users: email@domain.com
-         IP Address: X.X.X.X
-
-    Success! Project is published and running at create-react-app.surge.sh
-```
-
-Note that in order to support routers that use HTML5 `pushState` API, you may want to rename the `index.html` in your build folder to `200.html` before deploying to Surge. This [ensures that every URL falls back to that file](https://surge.sh/help/adding-a-200-page-for-client-side-routing).
-
-## Troubleshooting
-
-### `npm test` hangs on macOS Sierra
-
-If you run `npm test` and the console gets stuck after printing `react-scripts test --env=jsdom` to the console there might be a problem with your [Watchman](https://facebook.github.io/watchman/) installation as described in [facebookincubator/create-react-app#713](https://github.com/facebookincubator/create-react-app/issues/713).
-
-We recommend deleting `node_modules` in your project and running `npm install` (or `yarn` if you use it) first. If it doesn't help, you can try one of the numerous workarounds mentioned in these issues:
-
-* [facebook/jest#1767](https://github.com/facebook/jest/issues/1767)
-* [facebook/watchman#358](https://github.com/facebook/watchman/issues/358)
-* [ember-cli/ember-cli#6259](https://github.com/ember-cli/ember-cli/issues/6259)
-
-It is reported that installing Watchman 4.7.0 or newer fixes the issue. If you use [Homebrew](http://brew.sh/), you can run these commands to update it:
-
-```
-watchman shutdown-server
-brew update
-brew reinstall watchman
-```
-
-You can find [other installation methods](https://facebook.github.io/watchman/docs/install.html#build-install) on the Watchman documentation page.
-
-If this still doesn't help, try running `launchctl unload -F ~/Library/LaunchAgents/com.github.facebook.watchman.plist`.
-
-There are also reports that *uninstalling* Watchman fixes the issue. So if nothing else helps, remove it from your system and try again.
-
-### `npm run build` silently fails
-
-It is reported that `npm run build` can fail on machines with no swap space, which is common in cloud environments. If [the symptoms are matching](https://github.com/facebookincubator/create-react-app/issues/1133#issuecomment-264612171), consider adding some swap space to the machine you’re building on, or build the project locally.
-
-## Something Missing?
-
-If you have ideas for more “How To” recipes that should be on this page, [let us know](https://github.com/facebookincubator/create-react-app/issues) or [contribute some!](https://github.com/facebookincubator/create-react-app/edit/master/packages/react-scripts/template/README.md)
+![finalcar](https://lh3.googleusercontent.com/ADOBXOthirfSi9f9j-f2giwZc_9Gtlb6qcNAmnR0y1rLVBKvRRyG4Zf5oPkvtlXE2dsKKFy0Bw=s944 "final.gif")
