@@ -34,3 +34,21 @@ export const temperatureDown = (value) => {
   }
 }
 
+export const changeClimate = () => {
+  return {
+    type: 'CHANGE_CLIMATE'
+  }
+}
+
+export const changeWheel = (value) => {
+  return {
+    type: 'CHANGE_WHEEL',
+    value
+  }
+}
+
+export const updateStats = () => {
+  return {
+    type: 'UPDATE_STATS'
+  }
+}
