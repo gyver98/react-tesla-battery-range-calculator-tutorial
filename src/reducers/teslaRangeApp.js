@@ -52,6 +52,18 @@ function appReducer(state = initialState, action) {
       };
       return updateStats(state, newState);
     }
+    case 'SPEED_UP': {
+      const newState = {
+          ...state,
+          config: {
+            climate:state.config.climate,
+            speed:action.value + action.step,
+            temperature:state.config.temperature,
+            wheels:state.config.wheels
+          }
+      };
+      return updateStats(state, newState);
+    }    
     default:
       return state
   }
