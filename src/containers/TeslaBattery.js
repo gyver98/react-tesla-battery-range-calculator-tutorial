@@ -8,62 +8,57 @@ import TempTeslaCounter from '../components/TeslaCounter/TempTeslaCounter';
 import TeslaClimate from '../components/TeslaClimate/TeslaClimate';
 import TeslaWheels from '../components/TeslaWheels/TeslaWheels';
 
-class TeslaBattery extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  
-  render() {
-    // state
-    const { wheelsValue, 
-            climateValue,
-            temperatureLimit, 
-            speedValue,
-            speedInitValue,
-            temperatureValue,
-            temperatureInitValue,
-            carstats} = this.props;
-    // dispatch
-    const { speedIncrement, 
-            speedDecrement,
-            tempIncrement, 
-            tempDecrement,
-            handleChangeClimate,
-            handleChangeWheel } = this.props;
-    return (
-      <form className="tesla-battery">
-        <h1>Range Per Charge</h1>
-        <TeslaCar wheelsize={wheelsValue} />
-        <TeslaStats carstats={carstats} />
-        <div className="tesla-controls cf">
-          <SpeedTeslaCounter
-            currentValue={speedValue}
-            initValues={speedInitValue}
-            speedIncrement={speedIncrement}
-            speedDecrement={speedDecrement}
+const TeslaBattery = (props) => {
+  // state
+  const { wheelsValue,
+    climateValue,
+    temperatureLimit,
+    speedValue,
+    speedInitValue,
+    temperatureValue,
+    temperatureInitValue,
+    carstats } = props;
+  // dispatch
+  const { speedIncrement,
+    speedDecrement,
+    tempIncrement,
+    tempDecrement,
+    handleChangeClimate,
+    handleChangeWheel } = props;
+
+  return (
+    <form className="tesla-battery">
+      <h1>Range Per Charge</h1>
+      <TeslaCar wheelsize={wheelsValue} />
+      <TeslaStats carstats={carstats} />
+      <div className="tesla-controls cf">
+        <SpeedTeslaCounter
+          currentValue={speedValue}
+          initValues={speedInitValue}
+          speedIncrement={speedIncrement}
+          speedDecrement={speedDecrement}
+        />
+        <div className="tesla-climate-container cf">
+          <TempTeslaCounter
+            currentValue={temperatureValue}
+            initValues={temperatureInitValue}
+            tempIncrement={tempIncrement}
+            tempDecrement={tempDecrement}
           />
-          <div className="tesla-climate-container cf">
-            <TempTeslaCounter
-              currentValue={temperatureValue}
-              initValues={temperatureInitValue}
-              tempIncrement={tempIncrement}
-              tempDecrement={tempDecrement}
-            />
-            <TeslaClimate
-              value={climateValue}
-              limit={temperatureLimit}
-              handleChangeClimate={handleChangeClimate}
-            />
-          </div>
-          <TeslaWheels
-            value={wheelsValue}
-            handleChangeWheels={handleChangeWheel}
+          <TeslaClimate
+            value={climateValue}
+            limit={temperatureLimit}
+            handleChangeClimate={handleChangeClimate}
           />
         </div>
-        <TeslaNotice />
-      </form>
-    )
-  }
+        <TeslaWheels
+          value={wheelsValue}
+          handleChangeWheels={handleChangeWheel}
+        />
+      </div>
+      <TeslaNotice />
+    </form>
+  )
 }
 
 export default TeslaBattery;
