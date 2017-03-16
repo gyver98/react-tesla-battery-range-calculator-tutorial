@@ -3,7 +3,8 @@ import './TeslaBattery.css';
 import TeslaNotice from '../components/TeslaNotice/TeslaNotice';
 import TeslaCar from '../components/TeslaCar/TeslaCar';
 import TeslaStats from '../components/TeslaStats/TeslaStats';
-import TeslaCounter from '../components/TeslaCounter/TeslaCounter';
+import SpeedTeslaCounter from '../components/TeslaCounter/SpeedTeslaCounter';
+import TempTeslaCounter from '../components/TeslaCounter/TempTeslaCounter';
 import TeslaClimate from '../components/TeslaClimate/TeslaClimate';
 import TeslaWheels from '../components/TeslaWheels/TeslaWheels';
 
@@ -35,18 +36,18 @@ class TeslaBattery extends React.Component {
         <TeslaCar wheelsize={wheelsValue} />
         <TeslaStats carstats={carstats} />
         <div className="tesla-controls cf">
-          <TeslaCounter
+          <SpeedTeslaCounter
             currentValue={speedValue}
             initValues={speedInitValue}
             speedIncrement={speedIncrement}
             speedDecrement={speedDecrement}
           />
           <div className="tesla-climate-container cf">
-            <TeslaCounter
+            <TempTeslaCounter
               currentValue={temperatureValue}
               initValues={temperatureInitValue}
-              increment={tempIncrement}
-              decrement={tempDecrement}
+              tempIncrement={tempIncrement}
+              tempDecrement={tempDecrement}
             />
             <TeslaClimate
               value={climateValue}
