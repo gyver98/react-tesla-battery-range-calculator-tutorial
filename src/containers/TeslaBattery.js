@@ -38,8 +38,8 @@ class TeslaBattery extends React.Component {
           <TeslaCounter
             currentValue={speedValue}
             initValues={speedInitValue}
-            increment={speedIncrement}
-            decrement={speedDecrement}
+            speedIncrement={speedIncrement}
+            speedDecrement={speedDecrement}
           />
           <div className="tesla-climate-container cf">
             <TeslaCounter
