@@ -1,4 +1,4 @@
-import TeslaWheels from '../components/TeslaWheels';
+import TeslaWheels from '../components/TeslaWheels/TeslaWheels';
 import { connect } from 'react-redux';
 import { changeWheel } from '../actions'
 
