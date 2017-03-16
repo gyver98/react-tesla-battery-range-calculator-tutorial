@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import './App.css';
 import Header from './components/Header/Header';
-import TeslaBattery from './containers/TeslaBattery';
+import TeslaBatteryContainer from './containers/TeslaBatteryContainer';
 import appReducer from './reducers/teslaRangeApp';
 
 const counterDefaultVal = {
@@ -29,7 +31,7 @@ class App extends Component {
       <Provider store={store}>
         <div>
           <Header />
-          <TeslaBattery counterDefaultVal={counterDefaultVal}/>
+          <TeslaBatteryContainer />
         </div>
       </Provider>
     );
