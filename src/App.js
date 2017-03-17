@@ -12,7 +12,7 @@ import Header from './components/Header/Header';
 import './App.css';
 import appReducer from './reducers/teslaRangeApp';
 
-const store = createStore(appReducer);
+const store = createStore(appReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 class App extends Component {
   render() {
