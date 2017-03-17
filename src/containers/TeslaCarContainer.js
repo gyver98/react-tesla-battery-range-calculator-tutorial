@@ -1,4 +1,4 @@
-import TeslaCar from '../components/TeslaCar';
+import TeslaCar from '../components/TeslaCar/TeslaCar';
 import { connect } from 'react-redux';
 
 const mapStateToProps = (state) => {

@@ -7,8 +7,8 @@ import TeslaSpeedCounterContainer from './containers/TeslaSpeedCounterContainer'
 import TeslaTempCounterContainer from './containers/TeslaTempCounterContainer';
 import TeslaClimateContainer from './containers/TeslaClimateContainer';
 import TeslaWheelsContainer from './containers/TeslaWheelsContainer';
-import TeslaNotice from './components/TeslaNotice';
-import Header from './components/Header';
+import TeslaNotice from './components/TeslaNotice/TeslaNotice';
+import Header from './components/Header/Header';
 import './App.css';
 import appReducer from './reducers/teslaRangeApp';
 

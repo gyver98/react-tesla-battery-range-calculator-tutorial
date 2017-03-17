@@ -1,4 +1,4 @@
-import TeslaClimate from '../components/TeslaClimate';
+import TeslaClimate from '../components/TeslaClimate/TeslaClimate';
 import { connect } from 'react-redux';
 import { changeClimate } from '../actions'
 
